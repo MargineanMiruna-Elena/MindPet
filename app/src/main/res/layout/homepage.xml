@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Appname  -->
+    <TextView android:id="@+id/appName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="MindPet"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"/>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/bottomBlock"
+        android:layout_width="0dp"
+        android:layout_height="75dp"
+        android:background="@color/material_dynamic_neutral_variant90"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:padding="8dp">
+
+        <!-- To-Do List Button-->
+        <ImageButton
+            android:id="@+id/buttonTodo"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:src="@drawable/checklist"
+            android:background="@android:color/transparent"
+            android:scaleType="centerInside"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/buttonCalendar"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontalWeight="1"/>
+
+        <!-- Button Calendar -->
+        <ImageButton
+            android:id="@+id/buttonCalendar"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:src="@drawable/calendar"
+            android:background="@android:color/transparent"
+            app:layout_constraintStart_toEndOf="@id/buttonTodo"
+            app:layout_constraintEnd_toStartOf="@+id/buttonHome"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontalWeight="1"/>
+
+        <!-- Button Home -->
+        <ImageButton
+            android:id="@+id/buttonHome"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:src="@drawable/home"
+            android:background="@android:color/transparent"
+            android:scaleType="centerInside"
+            android:contentDescription="Home"
+            app:layout_constraintStart_toEndOf="@id/buttonCalendar"
+            app:layout_constraintEnd_toStartOf="@+id/buttonScreenTime"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontalWeight="1"/>
+
+        <!-- Button Screen Time -->
+        <ImageButton
+            android:id="@+id/buttonScreenTime"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:src="@drawable/clock"
+            android:background="@android:color/transparent"
+            app:layout_constraintStart_toEndOf="@id/buttonHome"
+            app:layout_constraintEnd_toStartOf="@+id/buttonAccount"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontalWeight="1"/>
+
+        <!-- Button Account -->
+        <ImageButton
+            android:id="@+id/buttonAccount"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:src="@drawable/account"
+            android:background="@android:color/transparent"
+            android:scaleType="centerInside"
+            app:layout_constraintStart_toEndOf="@id/buttonScreenTime"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontalWeight="1"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
