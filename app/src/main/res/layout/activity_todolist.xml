@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/material_dynamic_neutral99">
+
+
+    <TextView
+        android:id="@+id/appName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="MindPet"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp" />
+
+
+    <TextView
+        android:id="@+id/todoTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="To-Do List"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@color/material_dynamic_neutral40"
+        app:layout_constraintTop_toBottomOf="@id/appName"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp" />
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerTodo"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:paddingHorizontal="8dp"
+        android:paddingTop="4dp"
+        android:clipToPadding="false"
+        app:layout_constraintTop_toBottomOf="@id/todoTitle"
+        app:layout_constraintBottom_toTopOf="@id/bottomBlock"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+
+    <ImageButton
+        android:id="@+id/btnAddTask"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_margin="16dp"
+        android:background="@drawable/fab_background_light"
+        android:src="@drawable/ic_add"
+        android:contentDescription="Add Task"
+        android:scaleType="center"
+        app:layout_constraintBottom_toTopOf="@id/bottomBlock"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/bottomBlock"
+        android:layout_width="0dp"
+        android:layout_height="75dp"
+        android:background="@color/material_dynamic_neutral_variant90"
+        android:padding="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageButton
+            android:id="@+id/buttonTodo"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:src="@drawable/checklist"
+            android:background="@android:color/transparent"
+            android:scaleType="centerInside"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/buttonCalendar"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontalWeight="1"/>
+
+        <ImageButton
+            android:id="@+id/buttonCalendar"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:src="@drawable/calendar"
+            android:background="@android:color/transparent"
+            app:layout_constraintStart_toEndOf="@id/buttonTodo"
+            app:layout_constraintEnd_toStartOf="@+id/buttonHome"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontalWeight="1"/>
+
+        <ImageButton
+            android:id="@+id/buttonHome"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:src="@drawable/home"
+            android:background="@android:color/transparent"
+            android:scaleType="centerInside"
+            app:layout_constraintStart_toEndOf="@id/buttonCalendar"
+            app:layout_constraintEnd_toStartOf="@+id/buttonScreenTime"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontalWeight="1"/>
+
+        <ImageButton
+            android:id="@+id/buttonScreenTime"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:src="@drawable/clock"
+            android:background="@android:color/transparent"
+            app:layout_constraintStart_toEndOf="@id/buttonHome"
+            app:layout_constraintEnd_toStartOf="@+id/buttonAccount"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontalWeight="1"/>
+
+        <ImageButton
+            android:id="@+id/buttonAccount"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:src="@drawable/account"
+            android:background="@android:color/transparent"
+            android:scaleType="centerInside"
+            app:layout_constraintStart_toEndOf="@id/buttonScreenTime"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontalWeight="1"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
