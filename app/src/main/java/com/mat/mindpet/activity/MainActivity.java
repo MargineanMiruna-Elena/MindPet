@@ -1,4 +1,4 @@
-package com.mat.mindpet;
+package com.mat.mindpet.activity;
 
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -15,6 +15,8 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.mat.mindpet.DatabaseHelper;
+import com.mat.mindpet.R;
 import com.mat.mindpet.databinding.ActivityMainBinding;
 
 import android.view.Menu;

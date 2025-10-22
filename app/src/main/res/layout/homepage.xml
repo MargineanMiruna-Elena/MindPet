@@ -5,8 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- Appname  -->
-    <TextView android:id="@+id/appName"
+    <!-- App name -->
+    <TextView
+        android:id="@+id/appName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="MindPet"
@@ -15,88 +16,72 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"/>
+        android:layout_marginTop="16dp" />
 
-
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <!-- Bottom Navigation Bar -->
+    <LinearLayout
         android:id="@+id/bottomBlock"
         android:layout_width="0dp"
         android:layout_height="75dp"
+        android:orientation="horizontal"
         android:background="@color/material_dynamic_neutral_variant90"
+        android:padding="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:padding="8dp">
+        android:weightSum="5">
 
-        <!-- To-Do List Button-->
+        <!-- To-Do List Button -->
         <ImageButton
             android:id="@+id/buttonTodo"
             android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
             android:src="@drawable/checklist"
             android:background="@android:color/transparent"
-            android:scaleType="centerInside"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/buttonCalendar"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintHorizontalWeight="1"/>
+            android:scaleType="centerInside" />
 
         <!-- Button Calendar -->
         <ImageButton
             android:id="@+id/buttonCalendar"
             android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
             android:src="@drawable/calendar"
             android:background="@android:color/transparent"
-            app:layout_constraintStart_toEndOf="@id/buttonTodo"
-            app:layout_constraintEnd_toStartOf="@+id/buttonHome"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintHorizontalWeight="1"/>
+            android:scaleType="centerInside" />
 
         <!-- Button Home -->
         <ImageButton
             android:id="@+id/buttonHome"
             android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
             android:src="@drawable/home"
             android:background="@android:color/transparent"
             android:scaleType="centerInside"
-            android:contentDescription="Home"
-            app:layout_constraintStart_toEndOf="@id/buttonCalendar"
-            app:layout_constraintEnd_toStartOf="@+id/buttonScreenTime"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintHorizontalWeight="1"/>
+            android:contentDescription="Home" />
 
         <!-- Button Screen Time -->
         <ImageButton
             android:id="@+id/buttonScreenTime"
             android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
             android:src="@drawable/clock"
             android:background="@android:color/transparent"
-            app:layout_constraintStart_toEndOf="@id/buttonHome"
-            app:layout_constraintEnd_toStartOf="@+id/buttonAccount"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintHorizontalWeight="1"/>
+            android:scaleType="centerInside" />
 
         <!-- Button Account -->
         <ImageButton
             android:id="@+id/buttonAccount"
             android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
             android:src="@drawable/account"
             android:background="@android:color/transparent"
-            android:scaleType="centerInside"
-            app:layout_constraintStart_toEndOf="@id/buttonScreenTime"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintHorizontalWeight="1"/>
+            android:scaleType="centerInside" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

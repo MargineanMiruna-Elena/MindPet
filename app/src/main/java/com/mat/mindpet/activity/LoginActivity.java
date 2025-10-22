@@ -1,4 +1,4 @@
-package com.mat.mindpet;
+package com.mat.mindpet.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
@@ -8,6 +8,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.mat.mindpet.R;
 
 public class LoginActivity extends AppCompatActivity {
 
