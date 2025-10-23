@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F9FAFB">
+    android:background="@color/white">
 
     <!-- Scroll container for all sections -->
     <ScrollView
@@ -30,7 +30,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Phone Usage"
-                android:textColor="#1E1E1E"
+                android:textColor="@color/black"
                 android:textSize="26sp"
                 android:textStyle="bold" />
 
@@ -48,7 +48,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Overall Phone Stats"
-                    android:textColor="#1E1E1E"
+                    android:textColor="@color/black"
                     android:textSize="22sp"
                     android:textStyle="bold" />
 
@@ -84,7 +84,7 @@
                     android:text="App Limits"
                     android:textSize="22sp"
                     android:textStyle="bold"
-                    android:textColor="#1E1E1E"
+                    android:textColor="@color/black"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 

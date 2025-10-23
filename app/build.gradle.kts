@@ -39,11 +39,11 @@ android {
 dependencies {
     implementation(libs.appcompat)
     implementation(libs.material)
-    implementation(libs.constraintlayout)
+    implementation(libs.constraintlayout.v220)
     implementation(libs.navigation.fragment)
     implementation(libs.navigation.ui)
-    implementation(libs.material.v1100)
     implementation(libs.viewpager2)
+    implementation(libs.material.calendarview)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

@@ -2,4 +2,9 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="indigo">#480082</color>
+    <color name="wisteria">#C9A0DC</color>
+    <color name="french_lilac">#86608E</color>
+    <color name="lilac_shadow">#56365C</color>
+    <color name="icy_lilac">#E6E9F9</color>
 </resources>
