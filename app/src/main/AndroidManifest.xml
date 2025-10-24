@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MindPet">
         <activity
-            android:name=".activity.UsageStatsActivity"
+            android:name=".activity.CalendarActivity"
             android:exported="true"
             android:theme="@style/Theme.MindPet">
             <intent-filter>
