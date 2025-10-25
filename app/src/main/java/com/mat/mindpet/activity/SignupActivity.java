@@ -40,7 +40,7 @@ public class SignupActivity extends AppCompatActivity {
                 } else if (!password.equals(confirm)) {
                     Toast.makeText(SignupActivity.this, "Passwords do not match", Toast.LENGTH_SHORT).show();
                 } else {
-                    // needs to save in database later on
+                    // TODO: needs to be saved in the database
                     Toast.makeText(SignupActivity.this, "Account created successfully", Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(SignupActivity.this, LoginActivity.class));
                     finish();

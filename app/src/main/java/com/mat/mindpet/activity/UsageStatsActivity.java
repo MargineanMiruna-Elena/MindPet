@@ -13,6 +13,7 @@ import com.mat.mindpet.adapter.AppUsageAdapter;
 import com.mat.mindpet.R;
 import com.mat.mindpet.adapter.UsagePagerAdapter;
 import com.mat.mindpet.domain.AppUsage;
+import com.mat.mindpet.utils.NavigationHelper;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -49,5 +50,7 @@ public class UsageStatsActivity extends AppCompatActivity {
 
         AppUsageAdapter adapter = new AppUsageAdapter(appUsageList);
         rvAppUsageList.setAdapter(adapter);
+
+        NavigationHelper.setupNavigationBar(this);
     }
 }

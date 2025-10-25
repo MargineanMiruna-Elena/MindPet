@@ -60,81 +60,10 @@
         app:layout_constraintEnd_toEndOf="parent"/>
 
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/bottomBlock"
-        android:layout_width="0dp"
-        android:layout_height="75dp"
-        android:background="@color/material_dynamic_neutral_variant90"
-        android:padding="8dp"
+    <include
+        layout="@layout/navigation_bar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <ImageButton
-            android:id="@+id/buttonTodo"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:src="@drawable/checklist"
-            android:background="@android:color/transparent"
-            android:scaleType="centerInside"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/buttonCalendar"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintHorizontal_weight="1"/>
-
-        <ImageButton
-            android:id="@+id/buttonCalendar"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:src="@drawable/calendar"
-            android:background="@android:color/transparent"
-            android:scaleType="centerInside"
-            app:layout_constraintStart_toEndOf="@id/buttonTodo"
-            app:layout_constraintEnd_toStartOf="@+id/buttonHome"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintHorizontal_weight="1"/>
-
-        <ImageButton
-            android:id="@+id/buttonHome"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:src="@drawable/home"
-            android:background="@android:color/transparent"
-            android:scaleType="centerInside"
-            app:layout_constraintStart_toEndOf="@id/buttonCalendar"
-            app:layout_constraintEnd_toStartOf="@+id/buttonScreenTime"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintHorizontal_weight="1"/>
-
-        <ImageButton
-            android:id="@+id/buttonScreenTime"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:src="@drawable/clock"
-            android:background="@android:color/transparent"
-            android:scaleType="centerInside"
-            app:layout_constraintStart_toEndOf="@id/buttonHome"
-            app:layout_constraintEnd_toStartOf="@+id/buttonAccount"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintHorizontal_weight="1"/>
-
-        <ImageButton
-            android:id="@+id/buttonAccount"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:src="@drawable/account"
-            android:background="@android:color/transparent"
-            android:scaleType="centerInside"
-            app:layout_constraintStart_toEndOf="@id/buttonScreenTime"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintHorizontal_weight="1"/>
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

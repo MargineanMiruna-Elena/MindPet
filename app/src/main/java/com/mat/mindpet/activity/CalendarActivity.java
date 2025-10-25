@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.widget.TextView;
 
 import com.mat.mindpet.R;
+import com.mat.mindpet.utils.NavigationHelper;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.DayViewDecorator;
@@ -64,6 +65,8 @@ public class CalendarActivity extends AppCompatActivity {
         int streak = calculateStreak();
 
         calendarView.addDecorator(new StreakDecorator(this, streak, R.color.indigo));
+
+        NavigationHelper.setupNavigationBar(this);
     }
 
     private void updateLowerSection(CalendarDay selectedDay) {
@@ -156,4 +159,3 @@ public class CalendarActivity extends AppCompatActivity {
     }
 
 }
-
