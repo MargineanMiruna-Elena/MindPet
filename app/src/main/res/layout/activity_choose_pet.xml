@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/material_dynamic_neutral99"
+    android:padding="16dp">
+
+
+    <TextView
+        android:id="@+id/titleChoose"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Choose Your Pet"
+        android:textColor="@color/black"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"/>
+
+
+    <View
+        android:id="@+id/titleUnderline"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/material_dynamic_neutral_variant90"
+        app:layout_constraintTop_toBottomOf="@id/titleChoose"
+        app:layout_constraintStart_toStartOf="@id/titleChoose"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+
+    <ImageView
+        android:id="@+id/imagePet"
+        android:layout_width="240dp"
+        android:layout_height="240dp"
+        android:layout_marginTop="120dp"
+        android:contentDescription="Pet Image"
+        android:scaleType="fitCenter"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/titleUnderline" />
+
+    <TextView
+        android:id="@+id/textPetName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Pet Name"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/imagePet"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+
+    <TextView
+        android:id="@+id/textHint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Swipe left or right to choose"
+        android:textColor="@color/material_dynamic_neutral70"
+        android:textSize="14sp"
+        app:layout_constraintTop_toBottomOf="@id/textPetName"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+
+    <Button
+        android:id="@+id/btnAdopt"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="32dp"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="#A532AA"
+        android:text="Adopt Pet"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/textHint"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+
+    <ImageView
+        android:id="@+id/arrowLeft"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:src="@drawable/ic_arrow_left"
+        android:contentDescription="Previous Pet"
+        app:tint="#C9A0DC"
+        app:layout_constraintTop_toTopOf="@id/imagePet"
+        app:layout_constraintBottom_toBottomOf="@id/imagePet"
+        app:layout_constraintStart_toStartOf="parent"
+        android:padding="8dp"/>
+
+    <ImageView
+        android:id="@+id/arrowRight"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:src="@drawable/ic_arrow_right"
+        android:contentDescription="Next Pet"
+        app:tint="#C9A0DC"
+        app:layout_constraintTop_toTopOf="@id/imagePet"
+        app:layout_constraintBottom_toBottomOf="@id/imagePet"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:padding="8dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
