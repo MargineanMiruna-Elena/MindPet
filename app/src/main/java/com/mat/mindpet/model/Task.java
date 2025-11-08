@@ -3,15 +3,15 @@ package com.mat.mindpet.model;
 import java.time.LocalDate;
 
 public class Task {
-    private int taskId;
-    private int userId;
+    private String taskId;
+    private String userId;
     private String title;
     private LocalDate deadline;
     private boolean isCompleted;
     private int rewardPoints;
     private LocalDate createdAt;
 
-    public Task(int taskId, int userId, String title, LocalDate deadline, boolean isCompleted, int rewardPoints, LocalDate createdAt) {
+    public Task(String taskId, String userId, String title, LocalDate deadline, boolean isCompleted, int rewardPoints, LocalDate createdAt) {
         this.taskId = taskId;
         this.userId = userId;
         this.title = title;
@@ -21,7 +21,7 @@ public class Task {
         this.createdAt = createdAt;
     }
 
-    public int getTaskId() {
+    public String getTaskId() {
         return taskId;
     }
 
@@ -57,15 +57,15 @@ public class Task {
         this.createdAt = createdAt;
     }
 
-    public void setTaskId(int taskId) {
+    public void setTaskId(String taskId) {
         this.taskId = taskId;
     }
 
-    public int getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 

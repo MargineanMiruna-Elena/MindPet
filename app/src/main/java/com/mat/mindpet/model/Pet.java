@@ -1,34 +1,21 @@
 package com.mat.mindpet.model;
 
-public class Pet {
-    private int petId;
-    private int userId;
-    private String petName;
-    private int level;
-    private String mood;
+import com.mat.mindpet.model.enums.Mood;
+import com.mat.mindpet.model.enums.PetType;
 
-    public Pet(int petId, int userId, String petName, int level, String mood) {
-        this.petId = petId;
-        this.userId = userId;
+public class Pet {
+    private String petName;
+    private PetType petType;
+    private int level;
+    private Mood mood;
+
+    public Pet() {}
+
+    public Pet(String petName, PetType petType, int level, Mood mood) {
         this.petName = petName;
+        this.petType = petType;
         this.level = level;
         this.mood = mood;
-    }
-
-    public int getPetId() {
-        return petId;
-    }
-
-    public void setPetId(int petId) {
-        this.petId = petId;
-    }
-
-    public int getUserId() {
-        return userId;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
     }
 
     public String getPetName() {
@@ -39,6 +26,14 @@ public class Pet {
         this.petName = petName;
     }
 
+    public PetType getPetType() {
+        return petType;
+    }
+
+    public void setPetType(PetType petType) {
+        this.petType = petType;
+    }
+
     public int getLevel() {
         return level;
     }
@@ -47,11 +42,11 @@ public class Pet {
         this.level = level;
     }
 
-    public String getMood() {
+    public Mood getMood() {
         return mood;
     }
 
-    public void setMood(String mood) {
+    public void setMood(Mood mood) {
         this.mood = mood;
     }
 }

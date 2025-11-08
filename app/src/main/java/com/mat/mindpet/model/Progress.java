@@ -3,15 +3,15 @@ package com.mat.mindpet.model;
 import java.time.LocalDate;
 
 public class Progress {
-    private int progressId;
-    private int userId;
+    private String progressId;
+    private String userId;
     private LocalDate date;
     private int screenGoalsMet;
     private int dailyScore;
     private int streakCount;
     private int tasksCompleted;
 
-    public Progress(int progressId, int userId, LocalDate date, int screenGoalsMet, int dailyScore, int streakCount, int tasksCompleted) {
+    public Progress(String progressId, String userId, LocalDate date, int screenGoalsMet, int dailyScore, int streakCount, int tasksCompleted) {
         this.progressId = progressId;
         this.userId = userId;
         this.date = date;
@@ -21,19 +21,19 @@ public class Progress {
         this.tasksCompleted = tasksCompleted;
     }
 
-    public int getProgressId() {
+    public String getProgressId() {
         return progressId;
     }
 
-    public void setProgressId(int progressId) {
+    public void setProgressId(String progressId) {
         this.progressId = progressId;
     }
 
-    public int getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 

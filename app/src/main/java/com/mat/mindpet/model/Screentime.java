@@ -3,15 +3,15 @@ package com.mat.mindpet.model;
 import java.time.LocalDate;
 
 public class Screentime {
-    private int screentimeId;
-    private int userId;
+    private String screentimeId;
+    private String userId;
     private String appName;
     private LocalDate date;
     private int minutesUsed;
     private int goalMinutes;
     private int exceededGoalBy;
 
-    public Screentime(int screentimeId, int userId, String appName, LocalDate date, int minutesUsed, int goalMinutes, int exceededGoalBy) {
+    public Screentime(String screentimeId, String userId, String appName, LocalDate date, int minutesUsed, int goalMinutes, int exceededGoalBy) {
         this.screentimeId = screentimeId;
         this.userId = userId;
         this.appName = appName;
@@ -21,12 +21,20 @@ public class Screentime {
         this.exceededGoalBy = exceededGoalBy;
     }
 
-    public int getScreentimeId() {
+    public String getScreentimeId() {
         return screentimeId;
     }
 
-    public void setScreentimeId(int screentimeId) {
+    public void setScreentimeId(String screentimeId) {
         this.screentimeId = screentimeId;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getAppName() {
@@ -35,14 +43,6 @@ public class Screentime {
 
     public void setAppName(String appName) {
         this.appName = appName;
-    }
-
-    public int getUserId() {
-        return userId;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
     }
 
     public LocalDate getDate() {
