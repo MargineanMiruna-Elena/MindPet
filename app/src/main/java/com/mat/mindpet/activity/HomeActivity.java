@@ -10,6 +10,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.mat.mindpet.R;
 import com.mat.mindpet.utils.NavigationHelper;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class HomeActivity extends AppCompatActivity {
 
     @Override
@@ -18,20 +21,6 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_homepage);
 
         NavigationHelper.setupNavigationBar(this);
-
-        FirebaseDatabase database = FirebaseDatabase.getInstance(
-                "https://mindpet-81364-default-rtdb.europe-west1.firebasedatabase.app"
-        );
-
-        DatabaseReference ref = database.getReference("test_message");
-
-        ref.setValue("Hello from MindPet 🐾").addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                Log.d("FirebaseTest", "Data written successfully!");
-            } else {
-                Log.e("FirebaseTest", "Failed to write data", task.getException());
-            }
-        });
     }
 }
 

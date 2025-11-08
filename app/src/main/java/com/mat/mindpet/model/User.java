@@ -6,18 +6,16 @@ public class User {
     private String lastName;
     private String email;
     private String password;
-    private String joinDate;
     private Pet pet;
 
     public User() {}
 
-    public User(String userId, String firstName, String lastName, String email, String password, String joinDate, Pet pet) {
+    public User(String userId, String firstName, String lastName, String email, String password, Pet pet) {
         this.userId = userId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
-        this.joinDate = joinDate;
         this.pet = pet;
     }
 
@@ -41,10 +39,6 @@ public class User {
         return password;
     }
 
-    public String getJoinDate() {
-        return joinDate;
-    }
-
     public void setUserId(String userId) {
         this.userId = userId;
     }
@@ -63,10 +57,6 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public void setJoinDate(String joinDate) {
-        this.joinDate = joinDate;
     }
 
     public Pet getPet() {

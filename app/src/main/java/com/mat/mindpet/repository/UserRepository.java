@@ -41,9 +41,7 @@ public class UserRepository {
      * Creates a new user in the database
      */
     public void createUser(User user) {
-        String userId = usersRef.push().getKey();
-        user.setUserId(userId);
-        usersRef.child(userId).setValue(user);
+        usersRef.child(user.getUserId()).setValue(user);
     }
 
     /**
