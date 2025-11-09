@@ -15,7 +15,7 @@
         android:theme="@style/Theme.MindPet">
 
         <activity
-            android:name=".activity.HomeActivity"
+            android:name=".activity.LauncherActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -48,11 +48,12 @@
             android:exported="true" />
 
         <activity
-            android:name=".activity.MainActivity"
+            android:name=".activity.HomeActivity"
             android:exported="true" />
 
-
-
+        <activity
+            android:name=".activity.ChoosePetActivity"
+            android:exported="true" />
 
     </application>
 

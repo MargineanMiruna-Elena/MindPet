@@ -53,6 +53,6 @@ dependencies {
     implementation("com.google.firebase:firebase-database")
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-firestore")
-    implementation("com.google.dagger:hilt-android:2.52")
-    annotationProcessor("com.google.dagger:hilt-compiler:2.52")
+    implementation("com.google.dagger:hilt-android:2.46.1")
+    annotationProcessor("com.google.dagger:hilt-compiler:2.46.1")
 }

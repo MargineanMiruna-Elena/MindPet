@@ -1,5 +1,6 @@
 package com.mat.mindpet.utils;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -22,7 +23,13 @@ public class FirebaseModule {
 
     @Provides
     @Singleton
-    public DatabaseReference providePetsReference(FirebaseDatabase db) {
-        return db.getReference("pets");
+    public DatabaseReference provideDatabaseReference(FirebaseDatabase db) {
+        return db.getReference();
+    }
+
+    @Provides
+    @Singleton
+    public FirebaseAuth provideFirebaseAuth() {
+        return FirebaseAuth.getInstance();
     }
 }
