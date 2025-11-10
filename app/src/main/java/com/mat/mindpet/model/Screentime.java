@@ -11,6 +11,7 @@ public class Screentime {
     private int goalMinutes;
     private int exceededGoalBy;
 
+
     public Screentime(String screentimeId, String userId, String appName, LocalDate date, int minutesUsed, int goalMinutes, int exceededGoalBy) {
         this.screentimeId = screentimeId;
         this.userId = userId;

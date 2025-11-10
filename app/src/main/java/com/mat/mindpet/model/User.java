@@ -66,4 +66,8 @@ public class User {
     public void setPet(Pet pet) {
         this.pet = pet;
     }
+
+    public void displayName(){
+        System.out.println(firstName + " " + lastName);
+    }
 }
