@@ -4,16 +4,17 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
+import android.widget.Button;
 import android.widget.NumberPicker;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.mat.mindpet.R;
 import com.mat.mindpet.adapter.AppUsageAdapter;
 import com.mat.mindpet.domain.AppUsage;
 import com.mat.mindpet.service.ScreentimeService;
@@ -35,65 +36,44 @@ public class LimitDialogHelper {
     }
 
     public void showAddLimitDialog(AppCompatActivity activity, List<AppUsage> appUsageList, AppUsageAdapter adapter) {
+        LayoutInflater inflater = LayoutInflater.from(activity);
+        View dialogView = inflater.inflate(R.layout.dialog_add_limit, null);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setTitle("Add Limit");
+        Spinner spinnerOptions = dialogView.findViewById(R.id.spinnerApps);
+        NumberPicker hoursPicker = dialogView.findViewById(R.id.npHours);
+        NumberPicker minutesPicker = dialogView.findViewById(R.id.npMinutes);
+        Button btnAdd = dialogView.findViewById(R.id.btnAdd);
 
-        LinearLayout layout = new LinearLayout(activity);
-        layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setPadding(50, 40, 50, 10);
+        hoursPicker.setMinValue(0);
+        hoursPicker.setMaxValue(10);
+        hoursPicker.setValue(1);
 
-        Spinner appSpinner = new Spinner(activity);
+        minutesPicker.setMinValue(0);
+        minutesPicker.setMaxValue(59);
+        minutesPicker.setValue(0);
+
         List<String> installedApps = getInstalledApps(activity);
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(
                 activity,
                 android.R.layout.simple_spinner_dropdown_item,
                 installedApps
         );
-        appSpinner.setAdapter(spinnerAdapter);
-        layout.addView(appSpinner);
+        spinnerOptions.setAdapter(spinnerAdapter);
 
-        TextView timeLabel = new TextView(activity);
-        timeLabel.setText("Set time limit:");
-        timeLabel.setPadding(0, 30, 0, 10);
-        layout.addView(timeLabel);
+        AlertDialog dialog = new AlertDialog.Builder(activity)
+                .setView(dialogView)
+                .create();
 
-        LinearLayout timeLayout = new LinearLayout(activity);
-        timeLayout.setOrientation(LinearLayout.HORIZONTAL);
-        timeLayout.setGravity(Gravity.CENTER);
-
-        NumberPicker hoursPicker = new NumberPicker(activity);
-        hoursPicker.setMinValue(0);
-        hoursPicker.setMaxValue(10);
-        hoursPicker.setValue(1);
-        timeLayout.addView(hoursPicker);
-
-        TextView hoursLabel = new TextView(activity);
-        hoursLabel.setText(" h ");
-        hoursLabel.setTextSize(18f);
-        hoursLabel.setPadding(10, 0, 10, 0);
-        timeLayout.addView(hoursLabel);
-
-        NumberPicker minutesPicker = new NumberPicker(activity);
-        minutesPicker.setMinValue(0);
-        minutesPicker.setMaxValue(59);
-        minutesPicker.setValue(0);
-        timeLayout.addView(minutesPicker);
-
-        TextView minutesLabel = new TextView(activity);
-        minutesLabel.setText(" min");
-        minutesLabel.setTextSize(18f);
-        minutesLabel.setPadding(10, 0, 0, 0);
-        timeLayout.addView(minutesLabel);
-
-        layout.addView(timeLayout);
-        builder.setView(layout);
-
-        builder.setPositiveButton("Save", (dialog, which) -> {
-            String selectedApp = appSpinner.getSelectedItem().toString();
+        btnAdd.setOnClickListener(v -> {
+            String selectedApp = spinnerOptions.getSelectedItem().toString();
             int hours = hoursPicker.getValue();
             int minutes = minutesPicker.getValue();
             int totalMinutes = hours * 60 + minutes;
+
+            if (totalMinutes == 0) {
+                Toast.makeText(activity, "Please set a valid time limit", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
             screentimeService.addLimit(
                     activity,
@@ -112,14 +92,14 @@ public class LimitDialogHelper {
                         appUsageList.add(appUsage);
                         adapter.notifyItemInserted(appUsageList.size() - 1);
                         Toast.makeText(activity, "Limit successfully added!", Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
                     },
                     () -> Toast.makeText(activity, "A limit already exists for this app!", Toast.LENGTH_SHORT).show(),
                     error -> Toast.makeText(activity, "Error saving limit: " + error, Toast.LENGTH_SHORT).show()
             );
         });
 
-        builder.setNegativeButton("Cancel", null);
-        builder.show();
+        dialog.show();
     }
 
     private static List<String> getInstalledApps(AppCompatActivity activity) {

@@ -33,6 +33,9 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class UsageStatsActivity extends AppCompatActivity {
 
     private ViewPager2 viewPager;
@@ -41,28 +44,20 @@ public class UsageStatsActivity extends AppCompatActivity {
     private Button btnAddLimit;
     private AppUsageAdapter adapter;
     private List<AppUsage> appUsageList;
-
-    private LimitDialogHelper limitDialogHelper;
-
-
+    @Inject
+    AuthService authService;
+    @Inject
+    LimitDialogHelper limitDialogHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_statistics);
+
         viewPager = findViewById(R.id.viewPager);
         tabLayout = findViewById(R.id.tabLayout);
         rvAppUsageList = findViewById(R.id.rvLimitsList);
         btnAddLimit = findViewById(R.id.btnAddLimit);
-
-        UserRepository userRepository = new UserRepository(FirebaseDatabase.getInstance().getReference());
-        AuthService authService = new AuthService(FirebaseAuth.getInstance(), userRepository);
-
-        ScreentimeRepository screentimeRepository = new ScreentimeRepository(FirebaseDatabase.getInstance().getReference());
-        ScreentimeService screentimeService = new ScreentimeService(screentimeRepository, authService);
-
-        limitDialogHelper = new LimitDialogHelper(screentimeService);
-
 
         UsagePagerAdapter pagerUsageAdapter = new UsagePagerAdapter(this);
         viewPager.setAdapter(pagerUsageAdapter);

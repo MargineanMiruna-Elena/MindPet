@@ -17,13 +17,13 @@ import javax.inject.Inject;
 
 public class ScreentimeService {
 
-    private final ScreentimeRepository repository;
     private final AuthService authService;
+    private final ScreentimeRepository repository;
 
     @Inject
-    public ScreentimeService(ScreentimeRepository repository, AuthService authService) {
-        this.repository = repository;
+    public ScreentimeService(AuthService authService, ScreentimeRepository repository) {
         this.authService = authService;
+        this.repository = repository;
     }
 
     public void addLimit(AppCompatActivity activity, List<AppUsage> appUsageList, String selectedApp,
