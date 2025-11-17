@@ -23,7 +23,7 @@
             android:id="@+id/checkTask"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:buttonTint="@color/material_dynamic_neutral40"
+            android:buttonTint="@color/french_lilac"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />
