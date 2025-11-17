@@ -12,6 +12,7 @@ import com.mat.mindpet.repository.ScreentimeRepository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.function.Consumer;
 
 import javax.inject.Inject;
 
@@ -65,4 +66,57 @@ public class ScreentimeService {
             }
         });
     }
+    public void getUserLimits(
+            java.util.function.Consumer<List<Screentime>> onSuccess,
+            java.util.function.Consumer<String> onError
+    ) {
+
+        FirebaseUser currentUser = authService.getCurrentUser();
+        if (currentUser == null) {
+            onError.accept("User not logged in");
+            return;
+        }
+
+        String userId = currentUser.getUid();
+
+        repository.getScreentimesByUser(userId, new ScreentimeRepository.ScreentimesCallback() {
+            @Override
+            public void onSuccess(List<Screentime> screentimes) {
+                onSuccess.accept(screentimes);
+            }
+
+            @Override
+            public void onFailure(DatabaseError error) {
+                onError.accept(error.getMessage());
+            }
+        });
+    }
+
+
+    public void updateLimit(String appName, int newGoal, Runnable onSuccess, Consumer<String> onError) {
+
+        FirebaseUser user = authService.getCurrentUser();
+        if (user == null) {
+            onError.accept("User not logged in");
+            return;
+        }
+
+        repository.updateGoalMinutes(
+                user.getUid(),
+                appName,
+                newGoal,
+                new ScreentimeRepository.ScreentimeCallback() {
+                    @Override
+                    public void onSuccess(Screentime s) {
+                        onSuccess.run();
+                    }
+
+                    @Override
+                    public void onFailure(DatabaseError error) {
+                        onError.accept(error.getMessage());
+                    }
+                }
+        );
+    }
+
 }

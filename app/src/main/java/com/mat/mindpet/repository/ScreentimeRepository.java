@@ -25,6 +25,38 @@ public class ScreentimeRepository {
         this.screentimeRef = databaseReference.child("screentimes");
     }
 
+    public void updateGoalMinutes(String uid, String appName, int newGoal, ScreentimeCallback callback) {
+
+        screentimeRef.orderByChild("userId").equalTo(uid)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot snapshot) {
+
+                        for (DataSnapshot child : snapshot.getChildren()) {
+
+                            Map<String, Object> map = (Map<String, Object>) child.getValue();
+                            Screentime s = mapToScreentime(map);
+
+                            if (s != null && s.getAppName().equals(appName)) {
+
+                                child.getRef().child("goalMinutes").setValue(newGoal);
+
+                                callback.onSuccess(s);
+                                return;
+                            }
+                        }
+
+                        callback.onSuccess(null);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError error) {
+                        callback.onFailure(error);
+                    }
+                });
+    }
+
+
     public interface ScreentimeCallback {
         void onSuccess(Screentime screentime);
         void onFailure(DatabaseError error);

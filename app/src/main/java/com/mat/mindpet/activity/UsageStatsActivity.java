@@ -47,6 +47,8 @@ public class UsageStatsActivity extends AppCompatActivity {
     @Inject
     AuthService authService;
     @Inject
+    ScreentimeService screentimeService;
+    @Inject
     LimitDialogHelper limitDialogHelper;
 
     @Override
@@ -71,6 +73,16 @@ public class UsageStatsActivity extends AppCompatActivity {
         rvAppUsageList.setLayoutManager(new LinearLayoutManager(this));
         rvAppUsageList.setAdapter(adapter);
 
+        adapter.setOnEditClickListener(appUsage -> {
+            limitDialogHelper.showEditLimitDialog(
+                    this,
+                    appUsage,
+                    screentimeService,
+                    adapter
+            );
+        });
+
+        loadLimits();
 
         btnAddLimit.setOnClickListener(v -> {
             limitDialogHelper.showAddLimitDialog(this, appUsageList, adapter);
@@ -79,4 +91,29 @@ public class UsageStatsActivity extends AppCompatActivity {
 
         NavigationHelper.setupNavigationBar(this);
     }
+    private void loadLimits() {
+        screentimeService.getUserLimits(
+                screentimes -> {
+                    appUsageList.clear();
+
+                    for (Screentime s : screentimes) {
+
+
+                        AppUsage appUsage = new AppUsage(
+                                s.getAppName(),
+                                s.getMinutesUsed(),
+                                s.getGoalMinutes()
+                        );
+
+                        appUsageList.add(appUsage);
+                    }
+
+                    adapter.notifyDataSetChanged();
+                },
+                error -> Toast.makeText(this, "Error loading limits: " + error, Toast.LENGTH_SHORT).show()
+        );
+    }
+
+
+
 }

@@ -15,6 +15,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.mat.mindpet.R;
+import com.mat.mindpet.activity.UsageStatsActivity;
 import com.mat.mindpet.adapter.AppUsageAdapter;
 import com.mat.mindpet.domain.AppUsage;
 import com.mat.mindpet.service.ScreentimeService;
@@ -115,4 +116,78 @@ public class LimitDialogHelper {
         Collections.sort(appNames);
         return appNames;
     }
+
+
+
+    public void showEditLimitDialog(
+            UsageStatsActivity activity,
+            AppUsage appUsage,
+            ScreentimeService screentimeService,
+            AppUsageAdapter adapter
+    ) {
+
+        LayoutInflater inflater = LayoutInflater.from(activity);
+        View dialogView = inflater.inflate(R.layout.dialog_add_limit, null);
+
+        Spinner spinnerOptions = dialogView.findViewById(R.id.spinnerApps);
+        NumberPicker hoursPicker = dialogView.findViewById(R.id.npHours);
+        NumberPicker minutesPicker = dialogView.findViewById(R.id.npMinutes);
+        Button btnAdd = dialogView.findViewById(R.id.btnAdd);
+
+        spinnerOptions.setEnabled(false);
+        spinnerOptions.setAlpha(0.5f);
+
+        List<String> apps = new ArrayList<>();
+        apps.add(appUsage.getAppName());
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(
+                activity,
+                android.R.layout.simple_spinner_dropdown_item,
+                apps
+        );
+        spinnerOptions.setAdapter(spinnerAdapter);
+
+        hoursPicker.setMinValue(0);
+        hoursPicker.setMaxValue(10);
+        minutesPicker.setMinValue(0);
+        minutesPicker.setMaxValue(59);
+
+        int currentGoal = appUsage.getGoalMinutes();
+        hoursPicker.setValue(currentGoal / 60);
+        minutesPicker.setValue(currentGoal % 60);
+
+        btnAdd.setText("Save");
+
+        AlertDialog dialog = new AlertDialog.Builder(activity)
+                .setView(dialogView)
+                .create();
+
+        btnAdd.setOnClickListener(v -> {
+            int hours = hoursPicker.getValue();
+            int minutes = minutesPicker.getValue();
+            int totalMinutes = hours * 60 + minutes;
+
+            if (totalMinutes == 0) {
+                Toast.makeText(activity, "Please set a valid limit", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+
+            screentimeService.updateLimit(
+                    appUsage.getAppName(),
+                    totalMinutes,
+                    () -> {
+
+                        appUsage.setGoalMinutes(totalMinutes);
+                        adapter.notifyDataSetChanged();
+
+                        Toast.makeText(activity, "Limit updated!", Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
+                    },
+                    error -> Toast.makeText(activity, "Error updating limit: " + error, Toast.LENGTH_SHORT).show()
+            );
+        });
+
+        dialog.show();
+    }
+
 }

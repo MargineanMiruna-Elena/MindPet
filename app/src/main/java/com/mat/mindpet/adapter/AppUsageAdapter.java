@@ -1,8 +1,12 @@
 package com.mat.mindpet.adapter;
 
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,6 +22,17 @@ public class AppUsageAdapter extends RecyclerView.Adapter<AppUsageAdapter.ViewHo
 
     private List<AppUsage> appUsageList;
 
+
+    public interface OnEditClickListener {
+        void onEdit(AppUsage appUsage);
+    }
+
+    private OnEditClickListener editClickListener;
+
+    public void setOnEditClickListener(OnEditClickListener listener) {
+        this.editClickListener = listener;
+    }
+
     public AppUsageAdapter(List<AppUsage> appUsageList) {
         this.appUsageList = appUsageList;
     }
@@ -30,16 +45,72 @@ public class AppUsageAdapter extends RecyclerView.Adapter<AppUsageAdapter.ViewHo
         return new ViewHolder(view);
     }
 
-    @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        AppUsage app = appUsageList.get(position);
-        holder.tvAppName.setText(app.getAppName());
-        int h = app.getMinutesUsed()/60;
-        int m = app.getMinutesUsed() - h*60;
-        int gh = app.getGoalMinutes()/60;
-        int gm = app.getGoalMinutes() - gh*60;
-        holder.tvAppDetails.setText("Used " + h + "h " + m + "min today • Limit: " + gh + "h " + gm + "min");
+//    @Override
+//    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+//        AppUsage app = appUsageList.get(position);
+//
+//        holder.tvAppName.setText(app.getAppName());
+//
+//        int usedHours = app.getMinutesUsed() / 60;
+//        int usedMinutes = app.getMinutesUsed() % 60;
+//
+//        int limitHours = app.getGoalMinutes() / 60;
+//        int limitMinutes = app.getGoalMinutes() % 60;
+//
+//        holder.tvAppDetails.setText(
+//                "Used " + usedHours + "h " + usedMinutes + "min • Limit: " + limitHours + "h " + limitMinutes + "min"
+//        );
+//
+//
+//        holder.btnEdit.setOnClickListener(v -> {
+//            if (editClickListener != null) {
+//                editClickListener.onEdit(app);
+//            }
+//        });
+//    }
+@Override
+public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    AppUsage app = appUsageList.get(position);
+
+    holder.tvAppName.setText(app.getAppName());
+
+    try {
+        PackageManager pm = holder.itemView.getContext().getPackageManager();
+
+        Intent intent = new Intent(Intent.ACTION_MAIN, null);
+        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+
+        List<ResolveInfo> apps = pm.queryIntentActivities(intent, 0);
+
+        for (ResolveInfo info : apps) {
+            String label = info.loadLabel(pm).toString();
+
+            if (label.equals(app.getAppName())) {
+                holder.ivAppIcon.setImageDrawable(info.loadIcon(pm));
+                break;
+            }
+        }
+    } catch (Exception e) {
+        holder.ivAppIcon.setImageResource(R.drawable.default_app_icon);
     }
+
+    int usedH = app.getMinutesUsed() / 60;
+    int usedM = app.getMinutesUsed() % 60;
+
+    int limitH = app.getGoalMinutes() / 60;
+    int limitM = app.getGoalMinutes() % 60;
+
+    holder.tvAppDetails.setText(
+            "Used " + usedH + "h " + usedM + "min • Limit: " + limitH + "h " + limitM + "min"
+    );
+
+    holder.btnEdit.setOnClickListener(v -> {
+        if (editClickListener != null) {
+            editClickListener.onEdit(app);
+        }
+    });
+}
+
 
     @Override
     public int getItemCount() {
@@ -47,13 +118,19 @@ public class AppUsageAdapter extends RecyclerView.Adapter<AppUsageAdapter.ViewHo
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        ImageView ivAppIcon;
+
         TextView tvAppName, tvAppDetails;
+        ImageButton btnEdit;
+        ImageView ivAppIcon;
+
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+
             tvAppName = itemView.findViewById(R.id.tvAppName);
             tvAppDetails = itemView.findViewById(R.id.tvAppDetails);
+            btnEdit = itemView.findViewById(R.id.btnEditLimit);
+            ivAppIcon = itemView.findViewById(R.id.ivAppIcon);
         }
     }
 }

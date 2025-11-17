@@ -20,6 +20,16 @@ public class AppUsage {
         this.goalMinutes = goalMinutes;
         this.exceededGoal = minutesUsed - goalMinutes;
     }
+    public AppUsage(String appName, int minutesUsed, int goalMinutes) {
+        this.appName = appName;
+        this.minutesUsed = minutesUsed;
+        this.goalMinutes = goalMinutes;
+        this.date = LocalDate.now();
+        this.entryId = 0;
+        this.userId = 0;
+        this.exceededGoal = minutesUsed - goalMinutes;
+    }
+
 
     public int getEntryId() {
         return entryId;
