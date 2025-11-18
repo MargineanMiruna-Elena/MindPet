@@ -26,7 +26,8 @@
 
         <activity
             android:name=".activity.AccountActivity"
-            android:exported="true" />
+            android:exported="true"
+            android:windowSoftInputMode="adjustPan" />
 
         <activity
             android:name=".activity.CalendarActivity"
