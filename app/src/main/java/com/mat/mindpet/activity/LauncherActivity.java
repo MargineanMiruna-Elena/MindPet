@@ -1,5 +1,7 @@
 package com.mat.mindpet.activity;
 
+import static androidx.core.content.ContextCompat.startActivity;
+
 import android.content.Intent;
 import android.os.Bundle;
 
