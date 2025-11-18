@@ -119,4 +119,18 @@ public class ScreentimeService {
         );
     }
 
+    public void updateUsedMinutes(String screentimeId, int usedMinutes) {
+        repository.updateMinutesUsed(screentimeId, usedMinutes);
+    }
+
+    public void deleteLimit(String screentimeId, Runnable onSuccess, Consumer<String> onError) {
+        repository.deleteLimit(
+                screentimeId,
+                onSuccess,
+                error -> onError.accept(error)
+        );
+    }
+
+
+
 }

@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -140,4 +141,17 @@ public class ScreentimeRepository {
 
         return new Screentime(id, userId, appName, date, minutesUsed, goalMinutes, exceededGoalBy);
     }
+    public void updateMinutesUsed(String id, int minutes) {
+        screentimeRef.child(id).child("minutesUsed").setValue(minutes);
+    }
+
+    public void deleteLimit(String screentimeId, Runnable onSuccess, Consumer<String> onFailure) {
+        screentimeRef.child(screentimeId)
+                .removeValue()
+                .addOnSuccessListener(a -> onSuccess.run())
+                .addOnFailureListener(e -> onFailure.accept(e.getMessage()));
+    }
+
+
+
 }

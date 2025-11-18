@@ -37,39 +37,35 @@ public class LimitDialogHelper {
     }
 
     public void showAddLimitDialog(AppCompatActivity activity, List<AppUsage> appUsageList, AppUsageAdapter adapter) {
-        LayoutInflater inflater = LayoutInflater.from(activity);
-        View dialogView = inflater.inflate(R.layout.dialog_add_limit, null);
+
+        View dialogView = LayoutInflater.from(activity).inflate(R.layout.dialog_add_limit, null);
 
         Spinner spinnerOptions = dialogView.findViewById(R.id.spinnerApps);
         NumberPicker hoursPicker = dialogView.findViewById(R.id.npHours);
         NumberPicker minutesPicker = dialogView.findViewById(R.id.npMinutes);
         Button btnAdd = dialogView.findViewById(R.id.btnAdd);
+        Button btnDelete = dialogView.findViewById(R.id.btnDelete);
+
+        btnDelete.setVisibility(View.GONE);
 
         hoursPicker.setMinValue(0);
         hoursPicker.setMaxValue(10);
-        hoursPicker.setValue(1);
-
         minutesPicker.setMinValue(0);
         minutesPicker.setMaxValue(59);
-        minutesPicker.setValue(0);
 
         List<String> installedApps = getInstalledApps(activity);
-        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(
-                activity,
+        spinnerOptions.setAdapter(new ArrayAdapter<>(activity,
                 android.R.layout.simple_spinner_dropdown_item,
-                installedApps
-        );
-        spinnerOptions.setAdapter(spinnerAdapter);
+                installedApps));
 
         AlertDialog dialog = new AlertDialog.Builder(activity)
                 .setView(dialogView)
                 .create();
 
         btnAdd.setOnClickListener(v -> {
+
             String selectedApp = spinnerOptions.getSelectedItem().toString();
-            int hours = hoursPicker.getValue();
-            int minutes = minutesPicker.getValue();
-            int totalMinutes = hours * 60 + minutes;
+            int totalMinutes = hoursPicker.getValue() * 60 + minutesPicker.getValue();
 
             if (totalMinutes == 0) {
                 Toast.makeText(activity, "Please set a valid time limit", Toast.LENGTH_SHORT).show();
@@ -82,21 +78,14 @@ public class LimitDialogHelper {
                     selectedApp,
                     totalMinutes,
                     () -> {
-                        AppUsage appUsage = new AppUsage(
-                                appUsageList.size() + 1,
-                                1,
-                                selectedApp,
-                                LocalDate.now(),
-                                0,
-                                totalMinutes
-                        );
-                        appUsageList.add(appUsage);
+                        AppUsage a = new AppUsage(null, selectedApp, 0, totalMinutes);
+                        appUsageList.add(a);
                         adapter.notifyItemInserted(appUsageList.size() - 1);
-                        Toast.makeText(activity, "Limit successfully added!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, "Limit added!", Toast.LENGTH_SHORT).show();
                         dialog.dismiss();
                     },
-                    () -> Toast.makeText(activity, "A limit already exists for this app!", Toast.LENGTH_SHORT).show(),
-                    error -> Toast.makeText(activity, "Error saving limit: " + error, Toast.LENGTH_SHORT).show()
+                    () -> Toast.makeText(activity, "Limit already exists!", Toast.LENGTH_SHORT).show(),
+                    error -> Toast.makeText(activity, error, Toast.LENGTH_SHORT).show()
             );
         });
 
@@ -108,16 +97,14 @@ public class LimitDialogHelper {
         PackageManager pm = activity.getPackageManager();
         Intent intent = new Intent(Intent.ACTION_MAIN, null);
         intent.addCategory(Intent.CATEGORY_LAUNCHER);
-        List<ResolveInfo> resolveInfos = pm.queryIntentActivities(intent, 0);
-        for (ResolveInfo info : resolveInfos) {
-            String appName = info.loadLabel(pm).toString();
-            appNames.add(appName);
+
+        for (ResolveInfo info : pm.queryIntentActivities(intent, 0)) {
+            appNames.add(info.loadLabel(pm).toString());
         }
+
         Collections.sort(appNames);
         return appNames;
     }
-
-
 
     public void showEditLimitDialog(
             UsageStatsActivity activity,
@@ -126,68 +113,59 @@ public class LimitDialogHelper {
             AppUsageAdapter adapter
     ) {
 
-        LayoutInflater inflater = LayoutInflater.from(activity);
-        View dialogView = inflater.inflate(R.layout.dialog_add_limit, null);
+        View dialogView = LayoutInflater.from(activity)
+                .inflate(R.layout.dialog_edit_limit, null);
 
-        Spinner spinnerOptions = dialogView.findViewById(R.id.spinnerApps);
         NumberPicker hoursPicker = dialogView.findViewById(R.id.npHours);
         NumberPicker minutesPicker = dialogView.findViewById(R.id.npMinutes);
-        Button btnAdd = dialogView.findViewById(R.id.btnAdd);
-
-        spinnerOptions.setEnabled(false);
-        spinnerOptions.setAlpha(0.5f);
-
-        List<String> apps = new ArrayList<>();
-        apps.add(appUsage.getAppName());
-        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(
-                activity,
-                android.R.layout.simple_spinner_dropdown_item,
-                apps
-        );
-        spinnerOptions.setAdapter(spinnerAdapter);
+        Button btnSave = dialogView.findViewById(R.id.btnSave);
+        Button btnDelete = dialogView.findViewById(R.id.btnDelete);
 
         hoursPicker.setMinValue(0);
         hoursPicker.setMaxValue(10);
         minutesPicker.setMinValue(0);
         minutesPicker.setMaxValue(59);
 
-        int currentGoal = appUsage.getGoalMinutes();
-        hoursPicker.setValue(currentGoal / 60);
-        minutesPicker.setValue(currentGoal % 60);
-
-        btnAdd.setText("Save");
+        int goal = appUsage.getGoalMinutes();
+        hoursPicker.setValue(goal / 60);
+        minutesPicker.setValue(goal % 60);
 
         AlertDialog dialog = new AlertDialog.Builder(activity)
                 .setView(dialogView)
                 .create();
 
-        btnAdd.setOnClickListener(v -> {
-            int hours = hoursPicker.getValue();
-            int minutes = minutesPicker.getValue();
-            int totalMinutes = hours * 60 + minutes;
-
-            if (totalMinutes == 0) {
-                Toast.makeText(activity, "Please set a valid limit", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-
-            screentimeService.updateLimit(
-                    appUsage.getAppName(),
-                    totalMinutes,
+        btnSave.setOnClickListener(v -> {
+            int total = hoursPicker.getValue() * 60 + minutesPicker.getValue();
+            screentimeService.updateLimit(appUsage.getAppName(), total,
                     () -> {
-
-                        appUsage.setGoalMinutes(totalMinutes);
+                        appUsage.setGoalMinutes(total);
                         adapter.notifyDataSetChanged();
-
-                        Toast.makeText(activity, "Limit updated!", Toast.LENGTH_SHORT).show();
                         dialog.dismiss();
                     },
-                    error -> Toast.makeText(activity, "Error updating limit: " + error, Toast.LENGTH_SHORT).show()
+                    err -> Toast.makeText(activity, err, Toast.LENGTH_SHORT).show()
             );
+        });
+
+        btnDelete.setOnClickListener(v -> {
+            new AlertDialog.Builder(activity)
+                    .setTitle("Delete limit?")
+                    .setMessage("Are you sure you want to delete this limit?")
+                    .setPositiveButton("Delete", (d, w) -> {
+                        screentimeService.deleteLimit(
+                                appUsage.getScreentimeId(),
+                                () -> {
+                                    adapter.removeItem(appUsage);
+                                    dialog.dismiss();
+                                },
+                                err -> Toast.makeText(activity, err, Toast.LENGTH_SHORT).show()
+                        );
+                    })
+                    .setNegativeButton("Cancel", null)
+                    .show();
         });
 
         dialog.show();
     }
+
 
 }

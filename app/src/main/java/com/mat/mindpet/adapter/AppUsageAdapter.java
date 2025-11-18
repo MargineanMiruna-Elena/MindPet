@@ -22,15 +22,23 @@ public class AppUsageAdapter extends RecyclerView.Adapter<AppUsageAdapter.ViewHo
 
     private List<AppUsage> appUsageList;
 
-
     public interface OnEditClickListener {
         void onEdit(AppUsage appUsage);
     }
 
+    public interface OnDeleteClickListener {
+        void onDelete(AppUsage appUsage);
+    }
+
     private OnEditClickListener editClickListener;
+    private OnDeleteClickListener deleteClickListener;
 
     public void setOnEditClickListener(OnEditClickListener listener) {
         this.editClickListener = listener;
+    }
+
+    public void setOnDeleteClickListener(OnDeleteClickListener listener) {
+        this.deleteClickListener = listener;
     }
 
     public AppUsageAdapter(List<AppUsage> appUsageList) {
@@ -45,71 +53,51 @@ public class AppUsageAdapter extends RecyclerView.Adapter<AppUsageAdapter.ViewHo
         return new ViewHolder(view);
     }
 
-//    @Override
-//    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-//        AppUsage app = appUsageList.get(position);
-//
-//        holder.tvAppName.setText(app.getAppName());
-//
-//        int usedHours = app.getMinutesUsed() / 60;
-//        int usedMinutes = app.getMinutesUsed() % 60;
-//
-//        int limitHours = app.getGoalMinutes() / 60;
-//        int limitMinutes = app.getGoalMinutes() % 60;
-//
-//        holder.tvAppDetails.setText(
-//                "Used " + usedHours + "h " + usedMinutes + "min • Limit: " + limitHours + "h " + limitMinutes + "min"
-//        );
-//
-//
-//        holder.btnEdit.setOnClickListener(v -> {
-//            if (editClickListener != null) {
-//                editClickListener.onEdit(app);
-//            }
-//        });
-//    }
-@Override
-public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-    AppUsage app = appUsageList.get(position);
+    @Override
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        AppUsage app = appUsageList.get(position);
 
-    holder.tvAppName.setText(app.getAppName());
+        holder.tvAppName.setText(app.getAppName());
 
-    try {
-        PackageManager pm = holder.itemView.getContext().getPackageManager();
+        try {
+            PackageManager pm = holder.itemView.getContext().getPackageManager();
+            Intent intent = new Intent(Intent.ACTION_MAIN, null);
+            intent.addCategory(Intent.CATEGORY_LAUNCHER);
+            List<ResolveInfo> apps = pm.queryIntentActivities(intent, 0);
 
-        Intent intent = new Intent(Intent.ACTION_MAIN, null);
-        intent.addCategory(Intent.CATEGORY_LAUNCHER);
-
-        List<ResolveInfo> apps = pm.queryIntentActivities(intent, 0);
-
-        for (ResolveInfo info : apps) {
-            String label = info.loadLabel(pm).toString();
-
-            if (label.equals(app.getAppName())) {
-                holder.ivAppIcon.setImageDrawable(info.loadIcon(pm));
-                break;
+            for (ResolveInfo info : apps) {
+                String label = info.loadLabel(pm).toString();
+                if (label.equals(app.getAppName())) {
+                    holder.ivAppIcon.setImageDrawable(info.loadIcon(pm));
+                    break;
+                }
             }
+        } catch (Exception e) {
+            holder.ivAppIcon.setImageResource(R.drawable.default_app_icon);
         }
-    } catch (Exception e) {
-        holder.ivAppIcon.setImageResource(R.drawable.default_app_icon);
+
+        int usedH = app.getMinutesUsed() / 60;
+        int usedM = app.getMinutesUsed() % 60;
+
+        int limitH = app.getGoalMinutes() / 60;
+        int limitM = app.getGoalMinutes() % 60;
+
+        holder.tvAppDetails.setText(
+                "Used " + usedH + "h " + usedM + "min • Limit: " + limitH + "h " + limitM + "min"
+        );
+
+        if (app.getMinutesUsed() < app.getGoalMinutes()) {
+            holder.tvAppDetails.setTextColor(holder.itemView.getContext().getColor(android.R.color.holo_green_dark));
+        } else {
+            holder.tvAppDetails.setTextColor(holder.itemView.getContext().getColor(android.R.color.holo_red_dark));
+        }
+
+        holder.btnEdit.setOnClickListener(v -> {
+            if (editClickListener != null) {
+                editClickListener.onEdit(app);
+            }
+        });
     }
-
-    int usedH = app.getMinutesUsed() / 60;
-    int usedM = app.getMinutesUsed() % 60;
-
-    int limitH = app.getGoalMinutes() / 60;
-    int limitM = app.getGoalMinutes() % 60;
-
-    holder.tvAppDetails.setText(
-            "Used " + usedH + "h " + usedM + "min • Limit: " + limitH + "h " + limitM + "min"
-    );
-
-    holder.btnEdit.setOnClickListener(v -> {
-        if (editClickListener != null) {
-            editClickListener.onEdit(app);
-        }
-    });
-}
 
 
     @Override
@@ -117,12 +105,19 @@ public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         return appUsageList.size();
     }
 
+    public void removeItem(AppUsage app) {
+        int index = appUsageList.indexOf(app);
+        if (index != -1) {
+            appUsageList.remove(index);
+            notifyItemRemoved(index);
+        }
+    }
+
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView tvAppName, tvAppDetails;
         ImageButton btnEdit;
         ImageView ivAppIcon;
-
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -134,4 +129,3 @@ public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         }
     }
 }
-

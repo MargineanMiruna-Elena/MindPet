@@ -27,9 +27,12 @@ import com.mat.mindpet.service.AuthService;
 import com.mat.mindpet.service.ScreentimeService;
 import com.mat.mindpet.utils.LimitDialogHelper;
 import com.mat.mindpet.utils.NavigationHelper;
+import com.mat.mindpet.utils.UsageStatsHelper;
+
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -91,17 +94,34 @@ public class UsageStatsActivity extends AppCompatActivity {
 
         NavigationHelper.setupNavigationBar(this);
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadLimits();
+    }
     private void loadLimits() {
+
         screentimeService.getUserLimits(
                 screentimes -> {
+
+                    Map<String, Integer> usageNow = UsageStatsHelper.getUsage(this);
+
                     appUsageList.clear();
 
                     for (Screentime s : screentimes) {
 
+                        int usedToday = usageNow.getOrDefault(s.getAppName(), 0);
+
+                        screentimeService.updateUsedMinutes(
+                                s.getScreentimeId(),
+                                usedToday
+                        );
 
                         AppUsage appUsage = new AppUsage(
+                                s.getScreentimeId(),
                                 s.getAppName(),
-                                s.getMinutesUsed(),
+                                usedToday,
                                 s.getGoalMinutes()
                         );
 
@@ -113,6 +133,9 @@ public class UsageStatsActivity extends AppCompatActivity {
                 error -> Toast.makeText(this, "Error loading limits: " + error, Toast.LENGTH_SHORT).show()
         );
     }
+
+
+
 
 
 
