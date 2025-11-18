@@ -3,17 +3,25 @@ package com.mat.mindpet.domain;
 import java.time.LocalDate;
 
 public class AppUsage {
-    int entryId;
-    int userId;
-    String appName;
-    LocalDate date;
-    int minutesUsed;
-    int goalMinutes;
-    int exceededGoal;
 
-    public AppUsage(int entryId, int userId, String appName, LocalDate date, int minutesUsed, int goalMinutes) {
-        this.entryId = entryId;
-        this.userId = userId;
+    private String screentimeId;
+    private String appName;
+    private LocalDate date;
+    private int minutesUsed;
+    private int goalMinutes;
+    private int exceededGoal;
+
+    public AppUsage(String screentimeId, String appName, int minutesUsed, int goalMinutes) {
+        this.screentimeId = screentimeId;
+        this.appName = appName;
+        this.minutesUsed = minutesUsed;
+        this.goalMinutes = goalMinutes;
+        this.exceededGoal = minutesUsed - goalMinutes;
+        this.date = LocalDate.now();
+    }
+
+    public AppUsage(String screentimeId, String appName, LocalDate date, int minutesUsed, int goalMinutes) {
+        this.screentimeId = screentimeId;
         this.appName = appName;
         this.date = date;
         this.minutesUsed = minutesUsed;
@@ -21,20 +29,12 @@ public class AppUsage {
         this.exceededGoal = minutesUsed - goalMinutes;
     }
 
-    public int getEntryId() {
-        return entryId;
+    public String getScreentimeId() {
+        return screentimeId;
     }
 
-    public void setEntryId(int entryId) {
-        this.entryId = entryId;
-    }
-
-    public int getUserId() {
-        return userId;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
+    public void setScreentimeId(String screentimeId) {
+        this.screentimeId = screentimeId;
     }
 
     public String getAppName() {
