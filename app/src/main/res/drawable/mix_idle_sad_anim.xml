@@ -1,0 +1,10 @@
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:oneshot="false">
+
+    <item android:drawable="@drawable/mix_sad_poz_1" android:duration="240" />
+    <item android:drawable="@drawable/mix_sad_poz_2" android:duration="240" />
+    <item android:drawable="@drawable/mix_sad_poz_3" android:duration="240" />
+    <item android:drawable="@drawable/mix_sad_poz_4" android:duration="240" />
+    <item android:drawable="@drawable/mix_sad_poz_5" android:duration="240"/>
+
+</animation-list>

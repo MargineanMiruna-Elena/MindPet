@@ -1,0 +1,17 @@
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:oneshot="false">
+
+    <item android:drawable="@drawable/brown_happy_poz_1" android:duration="240" />
+    <item android:drawable="@drawable/brown_happy_poz_2" android:duration="240" />
+    <item android:drawable="@drawable/brown_happy_poz_3" android:duration="240" />
+    <item android:drawable="@drawable/brown_happy_poz_4" android:duration="240" />
+    <item android:drawable="@drawable/brown_happy_poz_5" android:duration="240"/>
+    <item android:drawable="@drawable/brown_happy_poz_6" android:duration="240"/>
+    <item android:drawable="@drawable/brown_happy_poz_7" android:duration="240"/>
+    <item android:drawable="@drawable/brown_happy_poz_8" android:duration="240"/>
+    <item android:drawable="@drawable/brown_happy_poz_9" android:duration="240"/>
+    <item android:drawable="@drawable/brown_happy_poz_10" android:duration="240"/>
+    <item android:drawable="@drawable/brown_happy_poz_7" android:duration="240"/>
+
+
+</animation-list>
