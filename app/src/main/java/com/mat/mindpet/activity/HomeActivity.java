@@ -103,14 +103,14 @@ public class HomeActivity extends AppCompatActivity {
 
     private int getPetAnimationResource(PetType type, Mood mood) {
         switch (type) {
-            case HUSKEY: //TODO develop corresponding animation for the mood
+            case HUSKEY:
                 switch (mood) {
                     case NEUTRAL:
                         return R.drawable.huskey_idle_diadown_neutral_anim;
-//                    case HAPPY:
-//                        return R.drawable.huskey_idle_happy_anim;
-//                    case SAD:
-//                        return R.drawable.huskey_idle_sad_anim;
+                    case HAPPY:
+                        return R.drawable.huskey_idle_happy_anim;
+                    case SAD:
+                        return R.drawable.huskey_idle_sad_anim;
                 }
             case BROWN_DOG: //TODO develop corresponding animation for the mood
                 switch (mood) {
@@ -139,14 +139,14 @@ public class HomeActivity extends AppCompatActivity {
 //                    case SAD:
 //                        return R.drawable.gray_cat_idle_sad_anim;
                 }
-            case BROWN_CAT: //TODO develop corresponding animation for the mood
+            case BROWN_CAT:
                 switch (mood) {
                     case NEUTRAL:
                         return R.drawable.brown_with_stripes_sitting_down_neutral_anim;
-//                    case HAPPY:
-//                        return R.drawable.brown_cat_idle_happy_anim;
-//                    case SAD:
-//                        return R.drawable.brown_cat_idle_sad_anim;
+                    case HAPPY:
+                        return R.drawable.brown_with_stripes_idle_happy_anim;
+                    case SAD:
+                        return R.drawable.brown_with_stripes_idle_sad_anim;
                 }
             case ORANGE_CAT: //TODO develop corresponding animation for the mood
                 switch (mood) {
