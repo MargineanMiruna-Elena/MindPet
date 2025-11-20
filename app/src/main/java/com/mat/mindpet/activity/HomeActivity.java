@@ -76,6 +76,7 @@ public class HomeActivity extends AppCompatActivity {
         imageAnimal.post(() -> {
             petAnim = (AnimationDrawable) imageAnimal.getBackground();
             petAnim.setOneShot(false);
+            petAnim.start();
         });
 
         ValueAnimator breatheAnimator = ValueAnimator.ofFloat(1f, 1.03f);
