@@ -130,14 +130,14 @@ public class HomeActivity extends AppCompatActivity {
                     case SAD:
                         return R.drawable.mix_idle_sad_anim;
                 }
-            case GRAY_CAT: //TODO develop corresponding animation for the mood
+            case GRAY_CAT:
                 switch (mood) {
                     case NEUTRAL:
                         return R.drawable.grey_cat_sitting_down_neutral_anim;
-//                    case HAPPY:
-//                        return R.drawable.gray_cat_idle_happy_anim;
-//                    case SAD:
-//                        return R.drawable.gray_cat_idle_sad_anim;
+                    case HAPPY:
+                        return R.drawable.grey_cat_idle_happy_anim;
+                    case SAD:
+                        return R.drawable.grey_cat_idle_sad_anim;
                 }
             case BROWN_CAT:
                 switch (mood) {
@@ -159,24 +159,6 @@ public class HomeActivity extends AppCompatActivity {
                 }
             default:
                 return R.drawable.huskey_idle_diadown_neutral_anim;
-        }
-    }
-    private int getPetImage(com.mat.mindpet.model.enums.PetType type) {
-        switch (type) {
-            case HUSKEY:
-                return R.drawable.husky_front;
-            case BROWN_DOG:
-                return R.drawable.brown_front;
-            case MIX_DOG:
-                return R.drawable.mix_front;
-            case GRAY_CAT:
-                return R.drawable.grey_cat_sitting_down;
-            case BROWN_CAT:
-                return R.drawable.brown_with_stripes_sitting_down;
-            case ORANGE_CAT:
-                return R.drawable.orange_sitting_down;
-            default:
-                return R.drawable.husky_front;
         }
     }
 }
