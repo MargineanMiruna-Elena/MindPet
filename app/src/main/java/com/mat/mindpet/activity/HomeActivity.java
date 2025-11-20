@@ -76,6 +76,7 @@ public class HomeActivity extends AppCompatActivity {
         imageAnimal.post(() -> {
             petAnim = (AnimationDrawable) imageAnimal.getBackground();
             petAnim.setOneShot(false);
+            petAnim.start();
         });
 
         ValueAnimator breatheAnimator = ValueAnimator.ofFloat(1f, 1.03f);
@@ -103,80 +104,62 @@ public class HomeActivity extends AppCompatActivity {
 
     private int getPetAnimationResource(PetType type, Mood mood) {
         switch (type) {
-            case HUSKEY: //TODO develop corresponding animation for the mood
+            case HUSKEY:
                 switch (mood) {
                     case NEUTRAL:
                         return R.drawable.huskey_idle_diadown_neutral_anim;
-//                    case HAPPY:
-//                        return R.drawable.huskey_idle_happy_anim;
-//                    case SAD:
-//                        return R.drawable.huskey_idle_sad_anim;
+                    case HAPPY:
+                        return R.drawable.huskey_idle_happy_anim;
+                    case SAD:
+                        return R.drawable.huskey_idle_sad_anim;
                 }
-            case BROWN_DOG: //TODO develop corresponding animation for the mood
+            case BROWN_DOG:
                 switch (mood) {
                     case NEUTRAL:
                         return R.drawable.brown_idle_diadown_neutral_anim;
-//                    case HAPPY:
-//                        return R.drawable.brown_dog_idle_happy_anim;
-//                    case SAD:
-//                        return R.drawable.brown_dog_idle_sad_anim;
+                    case HAPPY:
+                        return R.drawable.brown_idle_happy_anim;
+                    case SAD:
+                        return R.drawable.brown_idle_sad_anim;
                 }
-            case MIX_DOG: //TODO develop corresponding animation for the mood
+            case MIX_DOG:
                 switch (mood) {
                     case NEUTRAL:
                         return R.drawable.mix_idle_diadown_neutral_anim;
-//                    case HAPPY:
-//                        return R.drawable.mix_dog_idle_happy_anim;
-//                    case SAD:
-//                        return R.drawable.mix_dog_idle_sad_anim;
+                    case HAPPY:
+                        return R.drawable.mix_idle_happy_anim;
+                    case SAD:
+                        return R.drawable.mix_idle_sad_anim;
                 }
-            case GRAY_CAT: //TODO develop corresponding animation for the mood
+            case GRAY_CAT:
                 switch (mood) {
                     case NEUTRAL:
                         return R.drawable.grey_cat_sitting_down_neutral_anim;
-//                    case HAPPY:
-//                        return R.drawable.gray_cat_idle_happy_anim;
-//                    case SAD:
-//                        return R.drawable.gray_cat_idle_sad_anim;
+                    case HAPPY:
+                        return R.drawable.grey_cat_idle_happy_anim;
+                    case SAD:
+                        return R.drawable.grey_cat_idle_sad_anim;
                 }
-            case BROWN_CAT: //TODO develop corresponding animation for the mood
+            case BROWN_CAT:
                 switch (mood) {
                     case NEUTRAL:
                         return R.drawable.brown_with_stripes_sitting_down_neutral_anim;
-//                    case HAPPY:
-//                        return R.drawable.brown_cat_idle_happy_anim;
-//                    case SAD:
-//                        return R.drawable.brown_cat_idle_sad_anim;
+                    case HAPPY:
+                        return R.drawable.brown_with_stripes_idle_happy_anim;
+                    case SAD:
+                        return R.drawable.brown_with_stripes_idle_sad_anim;
                 }
-            case ORANGE_CAT: //TODO develop corresponding animation for the mood
+            case ORANGE_CAT:
                 switch (mood) {
                     case NEUTRAL:
                         return R.drawable.orange_sitting_down_neutral_anim;
-//                    case HAPPY:
-//                        return R.drawable.orange_cat_idle_happy_anim;
-//                    case SAD:
-//                        return R.drawable.orange_cat_idle_sad_anim;
+                    case HAPPY:
+                        return R.drawable.orange_idle_happy_anim;
+                    case SAD:
+                        return R.drawable.orange_idle_sad_anim;
                 }
             default:
                 return R.drawable.huskey_idle_diadown_neutral_anim;
-        }
-    }
-    private int getPetImage(com.mat.mindpet.model.enums.PetType type) {
-        switch (type) {
-            case HUSKEY:
-                return R.drawable.husky_front;
-            case BROWN_DOG:
-                return R.drawable.brown_front;
-            case MIX_DOG:
-                return R.drawable.mix_front;
-            case GRAY_CAT:
-                return R.drawable.grey_cat_sitting_down;
-            case BROWN_CAT:
-                return R.drawable.brown_with_stripes_sitting_down;
-            case ORANGE_CAT:
-                return R.drawable.orange_sitting_down;
-            default:
-                return R.drawable.husky_front;
         }
     }
 }
