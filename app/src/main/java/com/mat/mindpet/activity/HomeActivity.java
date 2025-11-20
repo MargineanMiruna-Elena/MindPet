@@ -148,14 +148,14 @@ public class HomeActivity extends AppCompatActivity {
                     case SAD:
                         return R.drawable.brown_with_stripes_idle_sad_anim;
                 }
-            case ORANGE_CAT: //TODO develop corresponding animation for the mood
+            case ORANGE_CAT:
                 switch (mood) {
                     case NEUTRAL:
                         return R.drawable.orange_sitting_down_neutral_anim;
-//                    case HAPPY:
-//                        return R.drawable.orange_cat_idle_happy_anim;
-//                    case SAD:
-//                        return R.drawable.orange_cat_idle_sad_anim;
+                    case HAPPY:
+                        return R.drawable.orange_idle_happy_anim;
+                    case SAD:
+                        return R.drawable.orange_idle_sad_anim;
                 }
             default:
                 return R.drawable.huskey_idle_diadown_neutral_anim;
