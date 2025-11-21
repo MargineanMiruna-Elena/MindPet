@@ -21,6 +21,8 @@ import com.mat.mindpet.adapter.AppUsageAdapter;
 import com.mat.mindpet.adapter.UsagePagerAdapter;
 import com.mat.mindpet.domain.AppUsage;
 import com.mat.mindpet.model.Screentime;
+import com.mat.mindpet.domain.StatsSummary;
+
 import com.mat.mindpet.repository.ScreentimeRepository;
 import com.mat.mindpet.repository.UserRepository;
 import com.mat.mindpet.service.AuthService;
@@ -43,6 +45,7 @@ public class UsageStatsActivity extends AppCompatActivity {
 
     private ViewPager2 viewPager;
     private TabLayout tabLayout;
+    private UsagePagerAdapter pagerUsageAdapter;
     private RecyclerView rvAppUsageList;
     private Button btnAddLimit;
     private AppUsageAdapter adapter;
@@ -54,6 +57,7 @@ public class UsageStatsActivity extends AppCompatActivity {
     @Inject
     LimitDialogHelper limitDialogHelper;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,36 +68,44 @@ public class UsageStatsActivity extends AppCompatActivity {
         rvAppUsageList = findViewById(R.id.rvLimitsList);
         btnAddLimit = findViewById(R.id.btnAddLimit);
 
-        UsagePagerAdapter pagerUsageAdapter = new UsagePagerAdapter(this);
+        pagerUsageAdapter = new UsagePagerAdapter(this);
         viewPager.setAdapter(pagerUsageAdapter);
+
         new TabLayoutMediator(tabLayout, viewPager,
                 (tab, position) -> tab.setText(pagerUsageAdapter.getTabTitle(position))
         ).attach();
 
+        screentimeService.getStatsSummary(this, new ScreentimeService.StatsCallback() {
+            @Override
+            public void onSuccess(StatsSummary summary) {
+                pagerUsageAdapter.setStatsSummary(summary);
+                pagerUsageAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onFailure(String error) { }
+        });
 
         appUsageList = new ArrayList<>();
         adapter = new AppUsageAdapter(appUsageList);
         rvAppUsageList.setLayoutManager(new LinearLayoutManager(this));
         rvAppUsageList.setAdapter(adapter);
 
-        adapter.setOnEditClickListener(appUsage -> {
-            limitDialogHelper.showEditLimitDialog(
-                    this,
-                    appUsage,
-                    screentimeService,
-                    adapter
-            );
-        });
+        adapter.setOnEditClickListener(appUsage ->
+                limitDialogHelper.showEditLimitDialog(
+                        this, appUsage, screentimeService, adapter
+                )
+        );
 
         loadLimits();
 
-        btnAddLimit.setOnClickListener(v -> {
-            limitDialogHelper.showAddLimitDialog(this, appUsageList, adapter);
-        });
-
+        btnAddLimit.setOnClickListener(v ->
+                limitDialogHelper.showAddLimitDialog(this, appUsageList, adapter)
+        );
 
         NavigationHelper.setupNavigationBar(this);
     }
+
 
     @Override
     protected void onResume() {
