@@ -1,13 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:padding="16dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+    <!-- Titlu task -->
     <EditText
         android:id="@+id/editTaskTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter task title" />
+        android:hint="Enter task title"
+        android:inputType="text" />
+
+    <!-- Deadline -->
+    <TextView
+        android:id="@+id/textDeadlineLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Deadline"
+        android:layout_marginTop="16dp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/editTaskDeadline"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Select deadline"
+        android:focusable="false"
+        android:clickable="true" />
+
+    <!-- Prioritate -->
+    <TextView
+        android:id="@+id/textPriorityLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Priority"
+        android:layout_marginTop="16dp"
+        android:textStyle="bold" />
+
+    <Spinner
+        android:id="@+id/spinnerPriority"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:entries="@array/task_priority_options" />
+
 </LinearLayout>

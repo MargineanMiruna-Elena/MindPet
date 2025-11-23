@@ -6,6 +6,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.mat.mindpet.model.Task;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,16 +26,18 @@ public class TaskRepository {
 
     public interface TaskCallback {
         void onSuccess(Task task);
-        void onFailure(DatabaseError error);
+
+        void onFailure(Exception e);
     }
 
     public interface TasksCallback {
         void onSuccess(List<Task> tasks);
-        void onFailure(DatabaseError error);
+
+        void onFailure(Exception e);
     }
 
     /**
-     * Creates a new task in the database
+     * Creates a new task
      */
     public void createTask(Task task) {
         String taskId = tasksRef.push().getKey();
@@ -42,63 +46,71 @@ public class TaskRepository {
     }
 
     /**
-     * Updates an existing task in the database
+     * Updates a task
      */
     public void updateTask(Task task) {
         tasksRef.child(task.getTaskId()).setValue(task);
     }
 
     /**
-     * Updates a specific field of a task
+     * Update a single field of a task
      */
     public void updateTaskField(String taskId, String fieldName, Object value) {
         tasksRef.child(taskId).child(fieldName).setValue(value);
     }
 
     /**
-     * Deletes a task from the database
+     * Deletes a task
      */
     public void deleteTask(String taskId) {
         tasksRef.child(taskId).removeValue();
     }
 
     /**
-     * Retrieve a task by its ID
+     * Retrieves a task with ID
      */
     public void getTaskById(String taskId, TaskCallback callback) {
         tasksRef.child(taskId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                Task task = snapshot.getValue(Task.class);
-                callback.onSuccess(task);
+                try {
+                    Task task = snapshot.getValue(Task.class);
+                    callback.onSuccess(task);
+                } catch (Exception e) {
+                    callback.onFailure(e);
+                }
             }
 
             @Override
             public void onCancelled(DatabaseError error) {
-                callback.onFailure(error);
+                callback.onFailure(new Exception(error.getMessage()));
             }
         });
     }
 
     /**
-     * Retrieve all tasks for a specific user
+     * Retrieves all task of a user
      */
     public void getTasksByUser(String userId, TasksCallback callback) {
         tasksRef.orderByChild("userId").equalTo(userId)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot snapshot) {
-                        List<Task> tasks = new ArrayList<>();
-                        for (DataSnapshot child : snapshot.getChildren()) {
-                            Task task = child.getValue(Task.class);
-                            tasks.add(task);
+                        try {
+                            List<Task> tasks = new ArrayList<>();
+                            for (DataSnapshot child : snapshot.getChildren()) {
+                                Task task = child.getValue(Task.class);
+                                tasks.add(task);
+                            }
+                            callback.onSuccess(tasks);
+                        } catch (Exception e) {
+                            callback.onFailure(e);
                         }
-                        callback.onSuccess(tasks);
                     }
 
                     @Override
                     public void onCancelled(DatabaseError error) {
-                        callback.onFailure(error);
+                        callback.onFailure(new Exception(error.getMessage()));
                     }
                 });
     }
