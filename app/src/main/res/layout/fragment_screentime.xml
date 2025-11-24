@@ -1,31 +1,89 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    android:orientation="horizontal"
+    android:gravity="center"
     android:padding="16dp"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/tvOverallUsage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Screentime: 0h 0m"
-        android:textColor="#333"
-        android:textSize="18sp" />
+    <!-- Screentime -->
+    <LinearLayout
+        android:id="@+id/cardScreentime"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_margin="8dp"
+        android:background="@drawable/bg_stat_circle">
 
-    <TextView
-        android:id="@+id/tvUnlocks"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Unlocks: 0"
-        android:textColor="#555"
-        android:textSize="16sp" />
+        <TextView
+            android:id="@+id/tvOverallUsage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0h 0m"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="@color/indigo" />
 
-    <TextView
-        android:id="@+id/tvNotifications"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Notifications: 0"
-        android:textColor="#555"
-        android:textSize="16sp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Screentime"
+            android:textSize="9sp"
+            android:textColor="@color/indigo" />
+    </LinearLayout>
+
+    <!-- Unlocks -->
+    <LinearLayout
+        android:id="@+id/cardUnlocks"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_margin="8dp"
+        android:background="@drawable/bg_stat_circle">
+
+        <TextView
+            android:id="@+id/tvUnlocks"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@color/indigo" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Unlocks"
+            android:textSize="9sp"
+            android:textColor="@color/indigo" />
+    </LinearLayout>
+
+    <!-- Notifications -->
+    <LinearLayout
+        android:id="@+id/cardNotifications"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_margin="8dp"
+        android:background="@drawable/bg_stat_circle">
+
+        <TextView
+            android:id="@+id/tvNotifications"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@color/indigo" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Notifications"
+            android:textSize="9sp"
+            android:textColor="@color/indigo" />
+    </LinearLayout>
+
 </LinearLayout>

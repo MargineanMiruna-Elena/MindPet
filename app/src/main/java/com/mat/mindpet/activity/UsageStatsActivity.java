@@ -2,6 +2,7 @@ package com.mat.mindpet.activity;
 
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -47,7 +48,7 @@ public class UsageStatsActivity extends AppCompatActivity {
     private TabLayout tabLayout;
     private UsagePagerAdapter pagerUsageAdapter;
     private RecyclerView rvAppUsageList;
-    private Button btnAddLimit;
+    private ImageButton btnAddLimit;
     private AppUsageAdapter adapter;
     private List<AppUsage> appUsageList;
     @Inject

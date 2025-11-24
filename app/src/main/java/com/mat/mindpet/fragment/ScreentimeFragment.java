@@ -83,6 +83,6 @@ public class ScreentimeFragment extends Fragment {
     private String formatTime(int minutes) {
         int h = minutes / 60;
         int m = minutes % 60;
-        return "Screentime: " + h + "h " + m + "m";
+        return  h + "h " + m + "m";
     }
 }

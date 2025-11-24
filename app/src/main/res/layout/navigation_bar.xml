@@ -24,7 +24,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:src="@drawable/checklist"
-            android:background="@android:color/transparent"
+            android:background="@drawable/nav_button_bg"
             android:scaleType="centerInside" />
 
         <ImageButton
@@ -33,7 +33,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:src="@drawable/calendar"
-            android:background="@android:color/transparent"
+            android:background="@drawable/nav_button_bg"
             android:scaleType="centerInside" />
 
         <ImageButton
@@ -42,7 +42,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:src="@drawable/home"
-            android:background="@android:color/transparent"
+            android:background="@drawable/nav_button_bg"
             android:scaleType="centerInside" />
 
         <ImageButton
@@ -51,7 +51,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:src="@drawable/clock"
-            android:background="@android:color/transparent"
+            android:background="@drawable/nav_button_bg"
             android:scaleType="centerInside" />
 
         <ImageButton
@@ -60,7 +60,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:src="@drawable/account"
-            android:background="@android:color/transparent"
+            android:background="@drawable/nav_button_bg"
             android:scaleType="centerInside" />
 
     </LinearLayout>
