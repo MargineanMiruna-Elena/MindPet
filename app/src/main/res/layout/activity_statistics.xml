@@ -5,43 +5,29 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/material_dynamic_neutral99">
-
-    <!-- Scroll container for all sections -->
-    <ScrollView
-        android:id="@+id/scrollViewMain"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:fillViewport="true"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
         <LinearLayout
-            android:id="@+id/mainContent"
             android:orientation="vertical"
-            android:padding="16dp"
-            android:layout_marginTop="30dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:padding="16dp">
 
-            <!-- Title -->
             <TextView
+                android:id="@+id/statsTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Phone Usage"
-                android:textColor="@color/black"
+                android:textColor="@color/indigo"
                 android:textSize="26sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:layout_marginTop="30dp" />
 
-            <!-- Overall Stats Card -->
             <LinearLayout
                 android:id="@+id/layoutOverallStats"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:background="@drawable/bg_card"
                 android:orientation="vertical"
+                android:background="@drawable/bg_card"
                 android:padding="16dp">
 
                 <TextView
@@ -50,7 +36,7 @@
                     android:text="Overall Phone Stats"
                     android:textColor="@color/black"
                     android:textSize="22sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"/>
 
                 <!-- Tabs -->
                 <com.google.android.material.tabs.TabLayout
@@ -58,6 +44,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
+                    app:backgroundTint="@color/button_bg_selector"
+                    android:textColor="@color/indigo"
                     app:tabMode="fixed"
                     app:tabGravity="fill" />
 
@@ -66,62 +54,64 @@
                     android:id="@+id/viewPager"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp" />
-
+                    android:layout_marginTop="8dp"/>
             </LinearLayout>
 
-            <!-- App Limits Section -->
+            <!--  App Limits Section -->
             <LinearLayout
                 android:id="@+id/layoutLimitsSection"
+                android:layout_width="match_parent"
+                android:layout_marginTop="16dp"
+                android:layout_height="330dp"
                 android:orientation="vertical"
                 android:background="@drawable/bg_card"
-                android:padding="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:padding="16dp">
 
-                <TextView
-                    android:text="App Limits"
-                    android:textSize="22sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/black"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-                <!-- Dynamic list of limits -->
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rvLimitsList"
-                    android:layout_marginTop="16dp"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:nestedScrollingEnabled="false" />
-
-                <!-- Add new limit section -->
-                <LinearLayout
                     android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_marginTop="12dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:gravity="center_vertical">
 
-
-                    <Button
-                        android:id="@+id/btnAddLimit"
-                        android:text="Add Limit"
-                        android:textAllCaps="false"
-                        android:layout_marginStart="12dp"
-                        android:layout_width="wrap_content"
+                    <TextView
+                        android:id="@+id/txtAppLimitsTitle"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center" />
+                        android:layout_weight="1"
+                        android:text="App Limits"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/black" />
+
+                    <ImageButton
+                        android:id="@+id/btnAddLimit"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="@drawable/fab_background_light"
+                        android:src="@drawable/ic_add"
+                        android:contentDescription="Add Limit"
+                        android:scaleType="center" />
                 </LinearLayout>
+
+                <!-- RecyclerView -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvLimitsList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:nestedScrollingEnabled="true"/>
+
+
             </LinearLayout>
+
+
         </LinearLayout>
-    </ScrollView>
+
 
     <include
         layout="@layout/navigation_bar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

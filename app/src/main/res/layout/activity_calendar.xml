@@ -21,18 +21,19 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="32dp">
+            <!-- Calendar Container -->
 
             <TextView
                 android:id="@+id/streakText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="8dp"
                 android:text="Calendar"
+                android:textColor="@color/indigo"
                 android:textSize="26sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:layout_marginBottom="4dp"/>
 
-            <!-- Calendar Container -->
             <LinearLayout
                 android:id="@+id/calendarContainer"
                 android:layout_width="match_parent"
@@ -48,7 +49,7 @@
                     app:mcv_headerTextAppearance="@style/TextAppearance.AppCompat.Title"
                     app:mcv_selectionColor="@color/wisteria"
                     app:mcv_showOtherDates="all"
-                    app:mcv_weekDayTextAppearance="@style/TextAppearance.AppCompat.Medium" />
+                    app:mcv_weekDayTextAppearance="@style/TextAppearance.AppCompat.Medium"/>
             </LinearLayout>
 
             <!-- Lower Info Section -->

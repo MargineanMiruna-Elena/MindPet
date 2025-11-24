@@ -13,7 +13,6 @@ import com.mat.mindpet.activity.UsageStatsActivity;
 
 public class NavigationHelper {
 
-    // Method that sets up the navigation bar on each page
     public static void setupNavigationBar(Activity activity) {
         View navHome = activity.findViewById(R.id.buttonHome);
         View navTodo = activity.findViewById(R.id.buttonTodo);
@@ -21,11 +20,14 @@ public class NavigationHelper {
         View navScreenTime = activity.findViewById(R.id.buttonScreenTime);
         View navAccount = activity.findViewById(R.id.buttonAccount);
 
+        View[] buttons = {navHome, navTodo, navCalendar, navScreenTime, navAccount};
+
         if (navHome != null) {
             navHome.setOnClickListener(v -> {
                 if (!(activity instanceof HomeActivity)) {
                     activity.startActivity(new Intent(activity, HomeActivity.class));
                 }
+                setSelectedButton(buttons, navHome);
             });
         }
 
@@ -34,6 +36,7 @@ public class NavigationHelper {
                 if (!(activity instanceof ToDoListActivity)) {
                     activity.startActivity(new Intent(activity, ToDoListActivity.class));
                 }
+                setSelectedButton(buttons, navTodo);
             });
         }
 
@@ -42,6 +45,7 @@ public class NavigationHelper {
                 if (!(activity instanceof CalendarActivity)) {
                     activity.startActivity(new Intent(activity, CalendarActivity.class));
                 }
+                setSelectedButton(buttons, navCalendar);
             });
         }
 
@@ -50,6 +54,7 @@ public class NavigationHelper {
                 if (!(activity instanceof UsageStatsActivity)) {
                     activity.startActivity(new Intent(activity, UsageStatsActivity.class));
                 }
+                setSelectedButton(buttons, navScreenTime);
             });
         }
 
@@ -58,8 +63,22 @@ public class NavigationHelper {
                 if (!(activity instanceof AccountActivity)) {
                     activity.startActivity(new Intent(activity, AccountActivity.class));
                 }
+                setSelectedButton(buttons, navAccount);
             });
+        }
+
+
+        if (activity instanceof HomeActivity) setSelectedButton(buttons, navHome);
+        else if (activity instanceof ToDoListActivity) setSelectedButton(buttons, navTodo);
+        else if (activity instanceof CalendarActivity) setSelectedButton(buttons, navCalendar);
+        else if (activity instanceof UsageStatsActivity) setSelectedButton(buttons, navScreenTime);
+        else if (activity instanceof AccountActivity) setSelectedButton(buttons, navAccount);
+    }
+    private static void setSelectedButton(View[] buttons, View selectedButton) {
+        for (View button : buttons) {
+            if (button != null) {
+                button.setSelected(button == selectedButton);
+            }
         }
     }
 }
-
