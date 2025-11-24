@@ -1,79 +1,56 @@
 package com.mat.mindpet.model;
 
-import java.time.LocalDate;
-
 public class Task {
+
     private String taskId;
     private String userId;
     private String title;
-    private LocalDate deadline;
+
+    private long deadline;
+
     private boolean isCompleted;
-    private int rewardPoints;
-    private LocalDate createdAt;
+    private String priority;
 
-    public Task(String taskId, String userId, String title, LocalDate deadline, boolean isCompleted, int rewardPoints, LocalDate createdAt) {
+    private long createdAt;
+
+    public Task() {}
+
+    public Task(String taskId, String userId, String title,
+                long deadline, boolean isCompleted, String priority,
+                long createdAt) {
+
         this.taskId = taskId;
         this.userId = userId;
         this.title = title;
+
         this.deadline = deadline;
+        this.createdAt = createdAt;
+
         this.isCompleted = isCompleted;
-        this.rewardPoints = rewardPoints;
-        this.createdAt = createdAt;
+        this.priority = priority;
     }
 
-    public String getTaskId() {
-        return taskId;
-    }
+    public String getTaskId() { return taskId; }
+    public void setTaskId(String taskId) { this.taskId = taskId; }
 
-    public String getTitle() {
-        return title;
-    }
+    public String getUserId() { return userId; }
+    public void setUserId(String userId) { this.userId = userId; }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
 
-    public int getRewardPoints() {
-        return rewardPoints;
-    }
+    public boolean getIsCompleted() { return isCompleted; }
+    public void setIsCompleted(boolean completed) { isCompleted = completed; }
 
-    public void setRewardPoints(int rewardPoints) {
-        this.rewardPoints = rewardPoints;
-    }
+    public String getPriority() { return priority; }
+    public void setPriority(String priority) { this.priority = priority; }
+    public long getDeadline() { return deadline; }
 
-    public LocalDate getDeadline() {
-        return deadline;
-    }
-
-    public void setDeadline(LocalDate deadline) {
+    public void setDeadline(long deadline) {
         this.deadline = deadline;
     }
 
-    public LocalDate getCreatedAt() {
-        return createdAt;
-    }
+    public long getCreatedAt() { return createdAt; }
 
-    public void setCreatedAt(LocalDate createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public void setTaskId(String taskId) {
-        this.taskId = taskId;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public boolean isCompleted() {
-        return isCompleted;
-    }
-
-    public void setCompleted(boolean completed) {
-        isCompleted = completed;
-    }
+    public void setCreatedAt(long createdAt) { this.createdAt = createdAt; }
 }

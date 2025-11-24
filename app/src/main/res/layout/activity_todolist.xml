@@ -6,64 +6,107 @@
     android:layout_height="match_parent"
     android:background="@color/material_dynamic_neutral99">
 
-
-    <TextView
-        android:id="@+id/todoTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="60dp"
-        android:text="To-Do List"
-        android:textColor="@color/black"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-
-    <ImageButton
-        android:id="@+id/btnAddTask"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginEnd="16dp"
-        android:background="@drawable/fab_background_light"
-        android:contentDescription="Add Task"
-        android:scaleType="center"
-        android:src="@drawable/ic_add"
-        app:layout_constraintTop_toTopOf="@id/todoTitle"
-        app:layout_constraintBottom_toBottomOf="@id/todoTitle"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-
-    <View
-        android:id="@+id/titleUnderline"
+    <!-- Top content -->
+    <LinearLayout
+        android:id="@+id/mainContent"
         android:layout_width="0dp"
-        android:layout_height="2dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:background="@color/material_dynamic_neutral_variant90"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/todoTitle" />
+        app:layout_constraintEnd_toEndOf="parent">
 
+        <!-- Title row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingTop="8dp"
+            android:layout_marginTop="30dp">
 
+            <TextView
+                android:id="@+id/todoTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="To-Do List"
+                android:textColor="@color/indigo"
+                android:textSize="26sp"
+                android:textStyle="bold" />
+
+            <ImageButton
+                android:id="@+id/btnAddTask"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+
+                android:background="@drawable/fab_background_light"
+                android:src="@drawable/ic_add"
+                android:scaleType="center"
+                android:contentDescription="Add Task" />
+        </LinearLayout>
+
+        <!-- FILTER BUTTONS -->
+        <com.google.android.material.button.MaterialButtonToggleGroup
+            android:id="@+id/navbarFilter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="3"
+            app:selectionRequired="true"
+            app:singleSelection="true">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnPast"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Past"
+                android:textColor="@color/indigo"
+                app:strokeColor="@color/indigo" 
+                app:backgroundTint="@color/button_bg_selector"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnUpcoming"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Upcoming"
+                android:textColor="@color/indigo"
+                app:strokeColor="@color/indigo"
+                app:backgroundTint="@color/button_bg_selector"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnOverdue"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Overdue"
+                android:textColor="@color/indigo"
+                app:strokeColor="@color/indigo"
+                app:backgroundTint="@color/button_bg_selector"/>
+
+        </com.google.android.material.button.MaterialButtonToggleGroup>
+    </LinearLayout>
+
+    <!-- Bottom navigation -->
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerTodo"
+        android:id="@+id/recyclerTasks"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:clipToPadding="false"
-        android:paddingHorizontal="8dp"
-        android:paddingTop="4dp"
-        android:paddingBottom="56dp"
-        app:layout_constraintTop_toBottomOf="@id/titleUnderline"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginBottom="65dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
-
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/mainContent"
+        app:layout_constraintVertical_bias="0.0" />
 
     <include
-
+        android:id="@+id/navigationBar"
         layout="@layout/navigation_bar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
