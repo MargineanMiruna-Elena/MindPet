@@ -34,85 +34,65 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            app:cardCornerRadius="20dp"
             android:background="@drawable/bg_card"
             android:backgroundTint="@color/white"
             android:orientation="vertical"
-            android:gravity="center"
-            android:padding="16dp">
+            android:padding="16dp"
+            app:cardCornerRadius="20dp">
+
+
+            <TextView
+                android:id="@+id/textLevelValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Level: 0"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:textStyle="bold" />
+
 
             <ImageView
                 android:id="@+id/imageAnimal"
                 android:layout_width="200dp"
                 android:layout_height="200dp"
+                android:layout_gravity="center"
                 android:contentDescription="Animal Image"
                 android:scaleType="fitCenter"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.496"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:srcCompat="@drawable/husky_front" />
+                tools:srcCompat="@drawable/husky_front"
+                android:layout_marginTop="8dp"/>
 
             <TextView
                 android:id="@+id/textAnimalName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:layout_marginTop="12dp"
                 android:text="Pet Name"
                 android:textColor="@color/indigo"
                 android:textSize="26sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/imageAnimal" />
-
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp">
-
-                <!-- Level Text -->
-                <TextView
-                    android:id="@+id/textLevelLabel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Level:"
-                    android:textSize="18sp"
-                    android:textColor="@color/black"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
-
-                <!-- ProgressBar filling remaining space -->
-                <ProgressBar
-                    android:id="@+id/progressLevel"
-                    style="@android:style/Widget.ProgressBar.Horizontal"
-                    android:layout_width="0dp"
-                    android:layout_height="16dp"
-                    android:max="100"
-                    android:progress="40"
-                    android:progressDrawable="@drawable/progress_bar"
-                    android:layout_marginStart="8dp"
-                    app:layout_constraintStart_toEndOf="@id/textLevelLabel"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/textLevelLabel"
-                    app:layout_constraintBottom_toBottomOf="@id/textLevelLabel"/>
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/textMood"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:layout_marginBottom="10dp"
-                android:text="Mood: "
+                android:text="Mood:"
                 android:textColor="@color/black"
                 android:textSize="16sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/textLevelLabel" />
+                android:textStyle="bold" />
 
+            <ProgressBar
+                android:id="@+id/progressLevel"
+                style="@android:style/Widget.ProgressBar.Horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="16dp"
+                android:layout_marginTop="4dp"
+                android:max="100"
+                android:progress="40"
+                android:progressDrawable="@drawable/progress_bar" />
         </LinearLayout>
     </LinearLayout>
 

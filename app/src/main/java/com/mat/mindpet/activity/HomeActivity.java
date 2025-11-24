@@ -1,7 +1,8 @@
 package com.mat.mindpet.activity;
 
+import android.animation.ValueAnimator;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -10,10 +11,10 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.mat.mindpet.R;
 import com.mat.mindpet.model.Pet;
+import com.mat.mindpet.model.enums.Mood;
+import com.mat.mindpet.model.enums.PetType;
 import com.mat.mindpet.repository.UserRepository;
 import com.mat.mindpet.service.PetService;
 import com.mat.mindpet.utils.NavigationHelper;
@@ -32,6 +33,7 @@ public class HomeActivity extends AppCompatActivity {
     private TextView textAnimalName;
     private TextView textMood;
     private ProgressBar progressLevel;
+    private AnimationDrawable petAnim;
 
 
     @Override
@@ -66,29 +68,98 @@ public class HomeActivity extends AppCompatActivity {
     private void updatePetUI(Pet pet) {
         textAnimalName.setText(pet.getPetName());
         textMood.setText("Mood: " + pet.getMood().name());
-
         progressLevel.setProgress(pet.getLevel());
 
-        int imageRes = getPetImage(pet.getPetType());
-        imageAnimal.setImageResource(imageRes);
+        int animResId = getPetAnimationResource(pet.getPetType(), pet.getMood());
+
+        imageAnimal.setBackgroundResource(animResId);
+        imageAnimal.post(() -> {
+            petAnim = (AnimationDrawable) imageAnimal.getBackground();
+            petAnim.setOneShot(false);
+            petAnim.start();
+        });
+
+        ValueAnimator breatheAnimator = ValueAnimator.ofFloat(1f, 1.03f);
+        breatheAnimator.setDuration(2200);
+        breatheAnimator.setRepeatCount(ValueAnimator.INFINITE);
+        breatheAnimator.setRepeatMode(ValueAnimator.REVERSE);
+        breatheAnimator.addUpdateListener(animation -> {
+            float value = (float) animation.getAnimatedValue();
+            imageAnimal.setScaleX(value);
+            imageAnimal.setScaleY(value);
+        });
+        breatheAnimator.start();
+
+        imageAnimal.setOnClickListener(v -> {
+            if (petAnim != null) {
+                if (petAnim.isRunning()) {
+                    petAnim.stop();
+                } else {
+                    petAnim.start();
+                }
+            }
+        });
     }
 
-    private int getPetImage(com.mat.mindpet.model.enums.PetType type) {
+
+    private int getPetAnimationResource(PetType type, Mood mood) {
         switch (type) {
             case HUSKEY:
-                return R.drawable.husky_front;
+                switch (mood) {
+                    case NEUTRAL:
+                        return R.drawable.huskey_idle_diadown_neutral_anim;
+                    case HAPPY:
+                        return R.drawable.huskey_idle_happy_anim;
+                    case SAD:
+                        return R.drawable.huskey_idle_sad_anim;
+                }
             case BROWN_DOG:
-                return R.drawable.brown_front;
+                switch (mood) {
+                    case NEUTRAL:
+                        return R.drawable.brown_idle_diadown_neutral_anim;
+                    case HAPPY:
+                        return R.drawable.brown_idle_happy_anim;
+                    case SAD:
+                        return R.drawable.brown_idle_sad_anim;
+                }
             case MIX_DOG:
-                return R.drawable.mix_front;
+                switch (mood) {
+                    case NEUTRAL:
+                        return R.drawable.mix_idle_diadown_neutral_anim;
+                    case HAPPY:
+                        return R.drawable.mix_idle_happy_anim;
+                    case SAD:
+                        return R.drawable.mix_idle_sad_anim;
+                }
             case GRAY_CAT:
-                return R.drawable.grey_cat_sitting_down;
+                switch (mood) {
+                    case NEUTRAL:
+                        return R.drawable.grey_cat_sitting_down_neutral_anim;
+                    case HAPPY:
+                        return R.drawable.grey_cat_idle_happy_anim;
+                    case SAD:
+                        return R.drawable.grey_cat_idle_sad_anim;
+                }
             case BROWN_CAT:
-                return R.drawable.brown_with_stripes_sitting_down;
+                switch (mood) {
+                    case NEUTRAL:
+                        return R.drawable.brown_with_stripes_sitting_down_neutral_anim;
+                    case HAPPY:
+                        return R.drawable.brown_with_stripes_idle_happy_anim;
+                    case SAD:
+                        return R.drawable.brown_with_stripes_idle_sad_anim;
+                }
             case ORANGE_CAT:
-                return R.drawable.orange_sitting_down;
+                switch (mood) {
+                    case NEUTRAL:
+                        return R.drawable.orange_sitting_down_neutral_anim;
+                    case HAPPY:
+                        return R.drawable.orange_idle_happy_anim;
+                    case SAD:
+                        return R.drawable.orange_idle_sad_anim;
+                }
             default:
-                return R.drawable.husky_front;
+                return R.drawable.huskey_idle_diadown_neutral_anim;
         }
     }
 }

@@ -1,0 +1,17 @@
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:oneshot="false">
+
+    <item android:drawable="@drawable/brown_with_stripes_sad_poz_1" android:duration="240" />
+    <item android:drawable="@drawable/brown_with_stripes_sad_poz_2" android:duration="240" />
+    <item android:drawable="@drawable/brown_with_stripes_sad_poz_3" android:duration="240" />
+    <item android:drawable="@drawable/brown_with_stripes_sad_poz_4" android:duration="240" />
+    <item android:drawable="@drawable/brown_with_stripes_sad_poz_5" android:duration="240" />
+    <item android:drawable="@drawable/brown_with_stripes_sad_poz_6" android:duration="240" />
+    <item android:drawable="@drawable/brown_with_stripes_sad_poz_7" android:duration="240" />
+    <item android:drawable="@drawable/brown_with_stripes_sad_poz_8" android:duration="240" />
+    <item android:drawable="@drawable/brown_with_stripes_sad_poz_9" android:duration="240" />
+    <item android:drawable="@drawable/brown_with_stripes_sad_poz_10" android:duration="240" />
+    <item android:drawable="@drawable/brown_with_stripes_sad_poz_11" android:duration="240" />
+    <item android:drawable="@drawable/brown_with_stripes_sad_poz_12" android:duration="240" />
+
+</animation-list>

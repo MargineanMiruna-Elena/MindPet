@@ -8,55 +8,73 @@
     android:layout_marginHorizontal="12dp"
     app:cardCornerRadius="12dp"
     app:cardElevation="4dp"
-    app:strokeColor="@color/material_dynamic_neutral80"
+    app:strokeColor="@color/divider"
     app:strokeWidth="1dp"
-    android:backgroundTint="@color/material_dynamic_neutral99">
+    android:backgroundTint="@color/white">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="60dp"
-        android:padding="8dp">
+        android:padding="0dp">
 
-
-        <CheckBox
-            android:id="@+id/checkTask"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:buttonTint="@color/french_lilac"
-            app:layout_constraintStart_toStartOf="parent"
+        <View
+            android:id="@+id/importanceIndicator"
+            android:layout_width="15dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="0dp"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
 
-
-        <TextView
-            android:id="@+id/textTaskTitle"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Walk the dog"
-            android:textColor="@color/black"
-            android:textSize="16sp"
-            android:ellipsize="end"
-            android:maxLines="1"
-            app:layout_constraintStart_toEndOf="@id/checkTask"
+            android:padding="4dp"
+            app:layout_constraintStart_toEndOf="@id/importanceIndicator"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginStart="12dp" />
+            app:layout_constraintBottom_toBottomOf="parent">
 
+            <CheckBox
+                android:id="@+id/checkTask"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:buttonTint="@color/indigo"
+                app:icon="@drawable/ic_check"
+                app:iconTint="@color/white"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
 
-        <TextView
-            android:id="@+id/textTaskDate"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="22/10/2025"
-            android:textSize="12sp"
-            android:textColor="@color/material_dynamic_neutral40"
-            app:layout_constraintStart_toStartOf="@id/textTaskTitle"
-            app:layout_constraintTop_toBottomOf="@id/textTaskTitle"
-            app:layout_constraintEnd_toEndOf="@id/textTaskTitle"
-            android:layout_marginTop="2dp"
-            android:ellipsize="end"
-            android:maxLines="1" />
+            <TextView
+                android:id="@+id/textTaskTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:ellipsize="end"
+                android:maxLines="1"
+                app:layout_constraintStart_toEndOf="@id/checkTask"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginStart="12dp" />
+
+            <TextView
+                android:id="@+id/textTaskDate"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:textColor="@color/black"
+                android:ellipsize="end"
+                android:maxLines="1"
+                app:layout_constraintStart_toStartOf="@id/textTaskTitle"
+                app:layout_constraintTop_toBottomOf="@id/textTaskTitle"
+                app:layout_constraintEnd_toEndOf="@id/textTaskTitle"
+                android:layout_marginTop="2dp" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

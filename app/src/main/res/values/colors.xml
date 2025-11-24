@@ -7,5 +7,9 @@
     <color name="french_lilac">#86608E</color>
     <color name="lilac_shadow">#56365C</color>
     <color name="icy_lilac">#E6E9F9</color>
+    <color name="light_lilac">#EDC9F9</color>
     <color name="gray">#808080</color>
+    <color name="red">#FF0000</color>
+    <color name="divider">#D8D8D8</color>
+    <color name="green">#008000</color>
 </resources>
