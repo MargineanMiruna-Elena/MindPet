@@ -1,88 +1,90 @@
 package com.mat.mindpet.domain;
 
-public class StatsSummary {
-    int userId;
-    private int dailyScreenTime;
-    private int weeklyAverageScreenTime;
-    private int yearlyAverageScreenTime;
+import java.io.Serializable;
 
-    private int dailyUnlocks;
-    private int weeklyAverageUnlocks;
-    private int yearlyAverageUnlocks;
+public class StatsSummary implements Serializable {
 
-    private int dailyNotifications;
-    private int weeklyAverageNotifications;
-    private int yearlyAverageNotifications;
+    private int yesterdayScreenTime;
+    private int todayScreenTime;
+    private int weeklyScreenTime;
 
-    public int getDailyScreenTime() {
-        return dailyScreenTime;
+    private int yesterdayUnlocks;
+    private int todayUnlocks;
+    private int weeklyUnlocks;
+
+    private int yesterdayNotifications;
+    private int todayNotifications;
+    private int weeklyNotifications;
+
+    public int getYesterdayScreenTime() {
+        return yesterdayScreenTime;
     }
 
-    public void setDailyScreenTime(int dailyScreenTime) {
-        this.dailyScreenTime = dailyScreenTime;
+    public void setYesterdayScreenTime(int yesterdayScreenTime) {
+        this.yesterdayScreenTime = yesterdayScreenTime;
     }
 
-    public int getWeeklyAverageScreenTime() {
-        return weeklyAverageScreenTime;
+    public int getTodayScreenTime() {
+        return todayScreenTime;
     }
 
-    public void setWeeklyAverageScreenTime(int weeklyAverageScreenTime) {
-        this.weeklyAverageScreenTime = weeklyAverageScreenTime;
+    public void setTodayScreenTime(int todayScreenTime) {
+        this.todayScreenTime = todayScreenTime;
     }
 
-    public int getYearlyAverageScreenTime() {
-        return yearlyAverageScreenTime;
+    public int getWeeklyScreenTime() {
+        return weeklyScreenTime;
     }
 
-    public void setYearlyAverageScreenTime(int yearlyAverageScreenTime) {
-        this.yearlyAverageScreenTime = yearlyAverageScreenTime;
+    public void setWeeklyScreenTime(int weeklyScreenTime) {
+        this.weeklyScreenTime = weeklyScreenTime;
     }
 
-    public int getDailyUnlocks() {
-        return dailyUnlocks;
+    public int getYesterdayUnlocks() {
+        return yesterdayUnlocks;
     }
 
-    public void setDailyUnlocks(int dailyUnlocks) {
-        this.dailyUnlocks = dailyUnlocks;
+    public void setYesterdayUnlocks(int yesterdayUnlocks) {
+        this.yesterdayUnlocks = yesterdayUnlocks;
     }
 
-    public int getWeeklyAverageUnlocks() {
-        return weeklyAverageUnlocks;
+    public int getTodayUnlocks() {
+        return todayUnlocks;
     }
 
-    public void setWeeklyAverageUnlocks(int weeklyAverageUnlocks) {
-        this.weeklyAverageUnlocks = weeklyAverageUnlocks;
+    public void setTodayUnlocks(int todayUnlocks) {
+        this.todayUnlocks = todayUnlocks;
     }
 
-    public int getYearlyAverageUnlocks() {
-        return yearlyAverageUnlocks;
+    public int getWeeklyUnlocks() {
+        return weeklyUnlocks;
     }
 
-    public void setYearlyAverageUnlocks(int yearlyAverageUnlocks) {
-        this.yearlyAverageUnlocks = yearlyAverageUnlocks;
+    public void setWeeklyUnlocks(int weeklyUnlocks) {
+        this.weeklyUnlocks = weeklyUnlocks;
     }
 
-    public int getDailyNotifications() {
-        return dailyNotifications;
+    public int getYesterdayNotifications() {
+        return yesterdayNotifications;
     }
 
-    public void setDailyNotifications(int dailyNotifications) {
-        this.dailyNotifications = dailyNotifications;
+    public void setYesterdayNotifications(int yesterdayNotifications) {
+        this.yesterdayNotifications = yesterdayNotifications;
     }
 
-    public int getWeeklyAverageNotifications() {
-        return weeklyAverageNotifications;
+    public int getTodayNotifications() {
+        return todayNotifications;
     }
 
-    public void setWeeklyAverageNotifications(int weeklyAverageNotifications) {
-        this.weeklyAverageNotifications = weeklyAverageNotifications;
+    public void setTodayNotifications(int todayNotifications) {
+        this.todayNotifications = todayNotifications;
     }
 
-    public int getYearlyAverageNotifications() {
-        return yearlyAverageNotifications;
+    public int getWeeklyNotifications() {
+        return weeklyNotifications;
     }
 
-    public void setYearlyAverageNotifications(int yearlyAverageNotifications) {
-        this.yearlyAverageNotifications = yearlyAverageNotifications;
+    public void setWeeklyNotifications(int weeklyNotifications) {
+        this.weeklyNotifications = weeklyNotifications;
     }
 }

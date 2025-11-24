@@ -11,20 +11,25 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.mat.mindpet.R;
+import com.mat.mindpet.domain.StatsSummary;
 
 public class ScreentimeFragment extends Fragment {
 
     private static final String ARG_INTERVAL = "interval";
+    private static final String ARG_STATS = "stats";
+
     private String interval;
+    private StatsSummary stats;
 
     private TextView tvOverallUsage;
     private TextView tvUnlocks;
     private TextView tvNotifications;
 
-    public static ScreentimeFragment newInstance(String interval) {
+    public static ScreentimeFragment newInstance(String interval, StatsSummary stats) {
         ScreentimeFragment fragment = new ScreentimeFragment();
         Bundle args = new Bundle();
         args.putString(ARG_INTERVAL, interval);
+        args.putSerializable(ARG_STATS, stats);
         fragment.setArguments(args);
         return fragment;
     }
@@ -34,6 +39,7 @@ public class ScreentimeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
+
         View view = inflater.inflate(R.layout.fragment_screentime, container, false);
 
         tvOverallUsage = view.findViewById(R.id.tvOverallUsage);
@@ -41,59 +47,42 @@ public class ScreentimeFragment extends Fragment {
         tvNotifications = view.findViewById(R.id.tvNotifications);
 
         if (getArguments() != null) {
-            interval = getArguments().getString(ARG_INTERVAL, "Daily");
-        } else {
-            interval = "Daily";
+            interval = getArguments().getString(ARG_INTERVAL);
+            stats = (StatsSummary) getArguments().getSerializable(ARG_STATS);
         }
 
-        updateUsageData(interval);
+        updateUI();
 
         return view;
     }
 
-    private void updateUsageData(String filter) {
-        int intervalType;
-        switch (filter) {
-            case "Daily": intervalType = 0; break;
-            case "Weekly": intervalType = 1; break;
-            case "Yearly": intervalType = 2; break;
-            default: intervalType = 0; break;
-        }
+    private void updateUI() {
+        if (stats == null) return;
 
-        long usageHours = getScreenTime(intervalType);
-        tvOverallUsage.setText("Screentime: " + (usageHours / 60) + "h " + (usageHours % 60) + "m");
+        switch (interval) {
+            case "Yesterday":
+                tvOverallUsage.setText(formatTime(stats.getYesterdayScreenTime()));
+                tvUnlocks.setText(String.valueOf(stats.getYesterdayUnlocks()));
+                tvNotifications.setText(String.valueOf(stats.getYesterdayNotifications()));
+                break;
 
-        int unlocks = getUnlockCount(intervalType);
-        tvUnlocks.setText("Unlocks: " + unlocks);
+            case "Today":
+                tvOverallUsage.setText(formatTime(stats.getTodayScreenTime()));
+                tvUnlocks.setText(String.valueOf(stats.getTodayUnlocks()));
+                tvNotifications.setText(String.valueOf(stats.getTodayNotifications()));
+                break;
 
-        int notifications = getNotificationCount(intervalType);
-        tvNotifications.setText("Notifications: " + notifications);
-    }
-
-    private long getScreenTime(int intervalType) {
-        switch (intervalType) {
-            case 0: return 265;
-            case 1: return 245;
-            case 2: return 320;
-            default: return 0;
+            case "This Week":
+                tvOverallUsage.setText(formatTime(stats.getWeeklyScreenTime()));
+                tvUnlocks.setText(String.valueOf(stats.getWeeklyUnlocks()));
+                tvNotifications.setText(String.valueOf(stats.getWeeklyNotifications()));
+                break;
         }
     }
 
-    private int getUnlockCount(int intervalType) {
-        switch (intervalType) {
-            case 0: return 55;
-            case 1: return 47;
-            case 2: return 53;
-            default: return 0;
-        }
-    }
-
-    private int getNotificationCount(int intervalType) {
-        switch (intervalType) {
-            case 0: return 135;
-            case 1: return 95;
-            case 2: return 102;
-            default: return 0;
-        }
+    private String formatTime(int minutes) {
+        int h = minutes / 60;
+        int m = minutes % 60;
+        return "Screentime: " + h + "h " + m + "m";
     }
 }

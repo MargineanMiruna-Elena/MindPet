@@ -17,26 +17,34 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
-    <TextView
-        android:id="@+id/tvAppName"
+
+    <LinearLayout
+        android:id="@+id/textContainer"
+        android:orientation="vertical"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Instagram"
-        android:textSize="16sp"
-        android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@id/ivAppIcon"
         app:layout_constraintEnd_toStartOf="@id/btnEditLimit"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
 
-    <TextView
-        android:id="@+id/tvAppDetails"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Used 1h 20m today • Limit: 2h"
-        android:textColor="#555"
-        android:textSize="14sp"
-        app:layout_constraintStart_toStartOf="@id/tvAppName"
-        app:layout_constraintTop_toBottomOf="@id/tvAppName"/>
+        <TextView
+            android:id="@+id/tvAppName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Instagram"
+            android:textSize="16sp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/tvAppDetails"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Used 1h 20m today • Limit: 2h"
+            android:textColor="#555"
+            android:textSize="14sp"/>
+
+    </LinearLayout>
 
     <ImageButton
         android:id="@+id/btnEditLimit"
