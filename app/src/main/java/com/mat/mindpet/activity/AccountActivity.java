@@ -1,16 +1,21 @@
 package com.mat.mindpet.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseError;
 import com.mat.mindpet.R;
 import com.mat.mindpet.model.User;
@@ -39,6 +44,8 @@ public class AccountActivity extends AppCompatActivity {
     private View rowEmail;
     private View rowPet;
     private View logoutButton;
+    private LinearLayout changePasswordSection;
+    private EditText oldPasswordEditText, newPasswordEditText, confirmPasswordEditText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +64,52 @@ public class AccountActivity extends AppCompatActivity {
         rowPet = findViewById(R.id.row_pet);
 
         loadCurrentUser();
+
+        changePasswordSection = findViewById(R.id.btnChangePassword);
+
+        changePasswordSection.setOnClickListener(view -> {
+            View dialogView = getLayoutInflater().inflate(R.layout.dialog_change_password, null);
+
+            oldPasswordEditText = dialogView.findViewById(R.id.edtOldPassword);
+            newPasswordEditText = dialogView.findViewById(R.id.edtNewPassword);
+            confirmPasswordEditText = dialogView.findViewById(R.id.edtConfirmPassword);
+
+            AlertDialog dialog = new AlertDialog.Builder(AccountActivity.this)
+                    .setView(dialogView)
+                    .create();
+
+            Button submit = dialogView.findViewById(R.id.btnSubmitPassword);
+            submit.setOnClickListener(v -> {
+                String oldPassword = oldPasswordEditText.getText().toString().trim();
+                String newPassword = newPasswordEditText.getText().toString().trim();
+                String confirmPassword = confirmPasswordEditText.getText().toString().trim();
+
+                if (oldPassword.isEmpty() || newPassword.isEmpty() || confirmPassword.isEmpty()) {
+                    Toast.makeText(AccountActivity.this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if(!newPassword.equals(confirmPassword)) {
+                    Toast.makeText(AccountActivity.this, "New passwords do not match", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                authService.changePassword(oldPassword, newPassword, new AuthService.AuthCallback() {
+                    @Override
+                    public void onSuccess(FirebaseUser firebaseUser) {
+                        Toast.makeText(AccountActivity.this, "Password updated!", Toast.LENGTH_LONG).show();
+                        dialog.dismiss();
+                    }
+
+                    @Override
+                    public void onFailure(String errorMessage) {
+                        Toast.makeText(AccountActivity.this, errorMessage, Toast.LENGTH_LONG).show();
+                    }
+                });
+            });
+
+            dialog.show();
+        });
 
         logoutButton.setOnClickListener(v -> {
             authService.logout();
