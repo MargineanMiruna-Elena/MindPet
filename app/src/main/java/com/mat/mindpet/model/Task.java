@@ -12,6 +12,7 @@ public class Task {
     private String priority;
 
     private long createdAt;
+    private long completedAt;
 
     public Task() {}
 
@@ -53,4 +54,8 @@ public class Task {
     public long getCreatedAt() { return createdAt; }
 
     public void setCreatedAt(long createdAt) { this.createdAt = createdAt; }
+
+    public long getCompletedAt() { return completedAt; }
+
+    public void setCompletedAt(long completedAt) { this.completedAt = completedAt; }
 }
