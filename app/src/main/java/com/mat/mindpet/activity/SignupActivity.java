@@ -56,7 +56,6 @@ public class SignupActivity extends AppCompatActivity {
             user.setFirstName(firstName);
             user.setLastName(lastName);
             user.setEmail(email);
-            user.setPassword(password);
 
             authService.signUp(email, password, user, new AuthService.AuthCallback() {
                 @Override

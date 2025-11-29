@@ -3,6 +3,7 @@ package com.mat.mindpet.activity;
 import android.animation.ValueAnimator;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -10,6 +11,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.button.MaterialButton;
 import com.google.firebase.database.DatabaseError;
 import com.mat.mindpet.R;
 import com.mat.mindpet.model.Pet;
@@ -30,11 +32,10 @@ public class HomeActivity extends AppCompatActivity {
     PetService petService;
 
     private ImageView imageAnimal;
-    private TextView textAnimalName;
-    private TextView textMood;
+    private TextView petName, petMood, petMoodDescription;
     private ProgressBar progressLevel;
     private AnimationDrawable petAnim;
-
+    private MaterialButton playButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,9 +45,11 @@ public class HomeActivity extends AppCompatActivity {
         NavigationHelper.setupNavigationBar(this);
 
         imageAnimal = findViewById(R.id.imageAnimal);
-        textAnimalName = findViewById(R.id.textAnimalName);
-        textMood = findViewById(R.id.textMood);
+        petName = findViewById(R.id.petName);
+        petMood = findViewById(R.id.petMood);
+        petMoodDescription = findViewById(R.id.petMoodDescription);
         progressLevel = findViewById(R.id.progressLevel);
+        playButton = findViewById(R.id.playBtn);
 
         petService.getPetForCurrentUser(new UserRepository.PetCallback() {
             @Override
@@ -66,9 +69,9 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void updatePetUI(Pet pet) {
-        textAnimalName.setText(pet.getPetName());
-        textMood.setText("Mood: " + pet.getMood().name());
-        progressLevel.setProgress(pet.getLevel());
+        petName.setText(pet.getPetName());
+        petMood.setText(pet.getMood().getDisplayName());
+        petMoodDescription.setText(pet.getMood().getDescription());
 
         int animResId = getPetAnimationResource(pet.getPetType(), pet.getMood());
 
@@ -76,7 +79,6 @@ public class HomeActivity extends AppCompatActivity {
         imageAnimal.post(() -> {
             petAnim = (AnimationDrawable) imageAnimal.getBackground();
             petAnim.setOneShot(false);
-            petAnim.start();
         });
 
         ValueAnimator breatheAnimator = ValueAnimator.ofFloat(1f, 1.03f);
@@ -90,12 +92,14 @@ public class HomeActivity extends AppCompatActivity {
         });
         breatheAnimator.start();
 
-        imageAnimal.setOnClickListener(v -> {
+        playButton.setOnClickListener(v -> {
             if (petAnim != null) {
                 if (petAnim.isRunning()) {
                     petAnim.stop();
+                    playButton.setIconResource(R.drawable.ic_play);
                 } else {
                     petAnim.start();
+                    playButton.setIconResource(R.drawable.ic_pause);
                 }
             }
         });

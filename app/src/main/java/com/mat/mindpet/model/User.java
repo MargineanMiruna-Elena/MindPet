@@ -5,17 +5,15 @@ public class User {
     private String firstName;
     private String lastName;
     private String email;
-    private String password;
     private Pet pet;
 
     public User() {}
 
-    public User(String userId, String firstName, String lastName, String email, String password, Pet pet) {
+    public User(String userId, String firstName, String lastName, String email, Pet pet) {
         this.userId = userId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
-        this.password = password;
         this.pet = pet;
     }
 
@@ -35,10 +33,6 @@ public class User {
         return email;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
     public void setUserId(String userId) {
         this.userId = userId;
     }
@@ -55,19 +49,11 @@ public class User {
         this.email = email;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public Pet getPet() {
         return pet;
     }
 
     public void setPet(Pet pet) {
         this.pet = pet;
-    }
-
-    public void displayName(){
-        System.out.println(firstName + " " + lastName);
     }
 }
