@@ -3,12 +3,15 @@ package com.mat.mindpet.activity;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
-import android.annotation.SuppressLint;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.mat.mindpet.R;
+import com.mat.mindpet.model.Task;
 import com.mat.mindpet.utils.NavigationHelper;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
@@ -16,34 +19,39 @@ import com.prolificinteractive.materialcalendarview.DayViewDecorator;
 import com.prolificinteractive.materialcalendarview.DayViewFacade;
 import com.prolificinteractive.materialcalendarview.spans.DotSpan;
 
-import android.graphics.Color;
-import android.text.style.BackgroundColorSpan;
-import android.text.style.ForegroundColorSpan;
-
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.Calendar;
+import java.util.TimeZone;
+import java.time.LocalDate;
 
 public class CalendarActivity extends AppCompatActivity {
 
     private MaterialCalendarView calendarView;
     private Set<CalendarDay> goalDays = new HashSet<>();
-    TextView textTasks;
-    TextView textScreenGoals;
-    TextView textDailyScore;
-    TextView textStreak;
+    TextView textTasksCount;
+    TextView textScreenGoalsCount;
+    TextView textDailyScoreCount;
+    TextView textStreakCount;
+    private FirebaseFirestore db;
+    private String currentUserId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendar);
 
-        calendarView = findViewById(R.id.calendarView);
+        db = FirebaseFirestore.getInstance();
+        currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-        textTasks = findViewById(R.id.textTasks);
-        textScreenGoals = findViewById(R.id.textScreenGoals);
-        textDailyScore = findViewById(R.id.textDailyScore);
-        textStreak = findViewById(R.id.textStreak);
+        calendarView = findViewById(R.id.calendarView);
+        textTasksCount = findViewById(R.id.textTasksCount);
+        textScreenGoalsCount = findViewById(R.id.textScreenGoalsCount);
+        textDailyScoreCount = findViewById(R.id.textDailyScoreCount);
+        textStreakCount = findViewById(R.id.textStreakCount);
 
         CalendarDay today = CalendarDay.today();
         calendarView.setDateSelected(today, true);
@@ -74,22 +82,25 @@ public class CalendarActivity extends AppCompatActivity {
         Calendar selectedCal = selectedDay.getCalendar();
 
         if (selectedCal.after(todayCal)) {
-            textTasks.setText("");
-            textScreenGoals.setText("");
-            textDailyScore.setText("");
-            textStreak.setText("");
+            textTasksCount.setText("-");
+            textScreenGoalsCount.setText("-");
+            textDailyScoreCount.setText("-");
+            textStreakCount.setText("-");
             return;
         }
 
-        int tasksCompleted = getTasksForDate(selectedDay);
-        int screenGoalsMet = getScreenGoalsForDate(selectedDay);
-        int dailyScore = getDailyScoreForDate(selectedDay);
-        int streak = calculateStreakUpTo(selectedDay);
+        getCompletedTasksForDate(selectedDay, completedTasks -> {
+            textTasksCount.setText(String.valueOf(completedTasks.size()));
+            int dailyScore = calculateDailyScore(completedTasks);
+            textDailyScoreCount.setText(String.valueOf(dailyScore));
+        });
 
-        textTasks.setText("Tasks completed: " + tasksCompleted);
-        textScreenGoals.setText("Screen goals met: " + screenGoalsMet);
-        textDailyScore.setText("Daily score: " + dailyScore);
-        textStreak.setText("Current streak: " + streak + " days");
+        getScreenGoalsForDate(selectedDay, screenGoalsMet -> {
+            textScreenGoalsCount.setText(String.valueOf(screenGoalsMet));
+        });
+
+        int streak = calculateStreakUpTo(selectedDay);
+        textStreakCount.setText(streak + " days");
     }
 
     private int calculateStreak() {
@@ -107,17 +118,82 @@ public class CalendarActivity extends AppCompatActivity {
         return streak;
     }
 
-    private int getTasksForDate(CalendarDay day) {
-        // TODO: fetch real tasks for the day
-        return 3; // example
+    private void getCompletedTasksForDate(CalendarDay day, final TaskCallback callback) {
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+        cal.set(day.getYear(), day.getMonth() - 1, day.getDay(), 0, 0, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        long startOfDay = cal.getTimeInMillis();
+
+        cal.add(Calendar.DAY_OF_MONTH, 1);
+        long endOfDay = cal.getTimeInMillis();
+
+        db.collection("tasks")
+                .whereEqualTo("userId", currentUserId)
+                .whereEqualTo("isCompleted", true)
+                .whereGreaterThanOrEqualTo("completedAt", startOfDay)
+                .whereLessThan("completedAt", endOfDay)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        List<Task> completedTasks = new ArrayList<>();
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            completedTasks.add(document.toObject(Task.class));
+                        }
+                        callback.onCallback(completedTasks);
+                    } else {
+                        callback.onCallback(new ArrayList<>());
+                    }
+                });
     }
 
-    private int getScreenGoalsForDate(CalendarDay day) {
-        return 2; // example
+    interface TaskCallback {
+        void onCallback(List<Task> completedTasks);
     }
 
-    private int getDailyScoreForDate(CalendarDay day) {
-        return 85; // example
+    private int calculateDailyScore(List<Task> tasks) {
+        int score = 0;
+        for (Task task : tasks) {
+            if (task.getPriority() != null) {
+                switch (task.getPriority()) {
+                    case "Urgent":
+                        score += 40;
+                        break;
+                    case "Important":
+                        score += 30;
+                        break;
+                    case "Normal":
+                        score += 20;
+                        break;
+                    case "Nice-to-have":
+                        score += 10;
+                        break;
+                }
+            }
+        }
+        return score;
+    }
+
+    private void getScreenGoalsForDate(CalendarDay day, final ScreenGoalsCallback callback) {
+        LocalDate selectedDate = LocalDate.of(day.getYear(), day.getMonth(), day.getDay());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String formattedDate = selectedDate.format(formatter);
+
+        db.collection("screentime")
+                .whereEqualTo("userId", currentUserId)
+                .whereEqualTo("date", formattedDate)
+                .whereLessThanOrEqualTo("exceededGoalBy", 0)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        callback.onCallback(task.getResult().size());
+                    } else {
+                        callback.onCallback(0);
+                    }
+                });
+    }
+
+    interface ScreenGoalsCallback {
+        void onCallback(int screenGoalsMet);
     }
 
     private int calculateStreakUpTo(CalendarDay day) {
