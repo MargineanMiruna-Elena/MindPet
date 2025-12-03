@@ -5,13 +5,15 @@ import java.time.LocalDate;
 public class Progress {
     private String progressId;
     private String userId;
-    private LocalDate date; //ziua pentru care se inregistreaza progresul
+    private long date; //ziua pentru care se inregistreaza progresul
     private int screenGoalsMet; //procentul limitelor nedepasite din numarul de limite setate
     private int dailyScore; //scorul zilnic calculat pe baza rewardurilor de la taskurile indeplinite
     private int streakCount; //numarul de zile consecutive in care utilizatorul a avut screenGoalsMet 100%
     private int tasksCompleted; //numarul de taskuri completate in acea zi
 
-    public Progress(String progressId, String userId, LocalDate date, int screenGoalsMet, int dailyScore, int streakCount, int tasksCompleted) {
+    public Progress(){}
+
+    public Progress(String progressId, String userId, long date, int screenGoalsMet, int dailyScore, int streakCount, int tasksCompleted) {
         this.progressId = progressId;
         this.userId = userId;
         this.date = date;
@@ -45,11 +47,11 @@ public class Progress {
         this.screenGoalsMet = screenGoalsMet;
     }
 
-    public LocalDate getDate() {
+    public long getDate() {
         return date;
     }
 
-    public void setDate(LocalDate date) {
+    public void setDate(long date) {
         this.date = date;
     }
 
