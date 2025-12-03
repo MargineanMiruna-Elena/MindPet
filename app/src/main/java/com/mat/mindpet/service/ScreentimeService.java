@@ -1,8 +1,10 @@
 package com.mat.mindpet.service;
 
 import android.content.Context;
+import android.os.Build;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseUser;
@@ -50,6 +52,7 @@ public class ScreentimeService {
         String userId = currentUser.getUid();
 
         repository.checkIfLimitExists(userId, selectedApp, new ScreentimeRepository.ScreentimeCallback() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onSuccess(Screentime existing) {
                 if (existing != null) {
