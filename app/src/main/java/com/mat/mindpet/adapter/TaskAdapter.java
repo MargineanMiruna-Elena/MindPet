@@ -50,6 +50,13 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             task.setIsCompleted(isChecked);
             if (task.getTaskId() != null) {
                 taskService.updateTaskField(task.getTaskId(), "isCompleted", isChecked);
+                if (isChecked) {
+                    long completedAt = System.currentTimeMillis();
+                    task.setCompletedAt(completedAt);
+                    taskService.updateTaskField(task.getTaskId(), "completedAt", completedAt);
+                } else {
+                    taskService.updateTaskField(task.getTaskId(), "completedAt", null);
+                }
             }
         });
 
