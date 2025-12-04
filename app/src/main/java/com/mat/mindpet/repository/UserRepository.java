@@ -1,5 +1,7 @@
 package com.mat.mindpet.repository;
 
+import android.util.Log;
+
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -77,6 +79,7 @@ public class UserRepository {
      */
     public void updatePetField(String userId, String fieldName, Object value) {
         usersRef.child(userId).child("pet").child(fieldName).setValue(value);
+        Log.d("UserRepository", "Updated pet field: " + fieldName + " with value: " + value);
     }
 
     /**

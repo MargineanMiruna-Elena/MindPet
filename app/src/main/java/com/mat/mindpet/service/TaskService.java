@@ -1,13 +1,7 @@
 package com.mat.mindpet.service;
 
-import com.google.firebase.database.DatabaseError;
 import com.mat.mindpet.model.Task;
 import com.mat.mindpet.repository.TaskRepository;
-
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;

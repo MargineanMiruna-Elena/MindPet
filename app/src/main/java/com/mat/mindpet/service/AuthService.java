@@ -8,7 +8,9 @@ import com.mat.mindpet.model.User;
 import com.mat.mindpet.repository.UserRepository;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
+@Singleton
 public class AuthService {
 
     private final FirebaseAuth auth;

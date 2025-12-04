@@ -8,6 +8,8 @@
 
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+
     <queries>
         <intent>
             <action android:name="android.intent.action.MAIN" />
@@ -26,12 +28,20 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MindPet">
 
-        <receiver android:name=".utils.UnlockReceiver"
-            android:exported="false">
+        <receiver
+            android:name=".utils.UnlockReceiver"
+            android:enabled="true"
+            android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.USER_PRESENT" />
+                <action android:name="android.intent.action.USER_PRESENT"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
+
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            tools:node="remove" />
 
         <service
             android:name=".utils.MyNotificationListener"

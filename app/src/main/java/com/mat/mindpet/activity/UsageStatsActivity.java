@@ -1,41 +1,37 @@
 package com.mat.mindpet.activity;
 
 import android.os.Bundle;
-import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.viewpager2.widget.ViewPager2;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
 
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.FirebaseDatabase;
 import com.mat.mindpet.R;
 import com.mat.mindpet.adapter.AppUsageAdapter;
 import com.mat.mindpet.adapter.UsagePagerAdapter;
 import com.mat.mindpet.domain.AppUsage;
 import com.mat.mindpet.model.Screentime;
 import com.mat.mindpet.domain.StatsSummary;
-
-import com.mat.mindpet.repository.ScreentimeRepository;
-import com.mat.mindpet.repository.UserRepository;
 import com.mat.mindpet.service.AuthService;
 import com.mat.mindpet.service.ScreentimeService;
 import com.mat.mindpet.utils.LimitDialogHelper;
 import com.mat.mindpet.utils.NavigationHelper;
 import com.mat.mindpet.utils.UsageStatsHelper;
+import com.mat.mindpet.utils.UsageUpdateWorker;
 
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -63,6 +59,8 @@ public class UsageStatsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_statistics);
+
+        startPeriodicBackgroundUpdate();
 
         viewPager = findViewById(R.id.viewPager);
         tabLayout = findViewById(R.id.tabLayout);
@@ -117,7 +115,8 @@ public class UsageStatsActivity extends AppCompatActivity {
 
         screentimeService.getUserLimits(
                 screentimes -> {
-
+                    int exceeded = 0;
+                    int total = screentimes.size();
                     Map<String, Integer> usageNow = UsageStatsHelper.getUsage(this);
 
                     appUsageList.clear();
@@ -131,6 +130,10 @@ public class UsageStatsActivity extends AppCompatActivity {
                                 usedToday
                         );
 
+                        if (usedToday > s.getGoalMinutes()) {
+                            exceeded++;
+                        }
+
                         AppUsage appUsage = new AppUsage(
                                 s.getScreentimeId(),
                                 s.getAppName(),
@@ -141,15 +144,27 @@ public class UsageStatsActivity extends AppCompatActivity {
                         appUsageList.add(appUsage);
                     }
 
+                    int percentMet = total == 0 ? 100 : ((total - exceeded) * 100) / total;
+                    screentimeService.updateScreenGoalsMetToday(
+                            authService.getCurrentUser().getUid(),
+                            percentMet
+                    );
+
                     adapter.notifyDataSetChanged();
                 },
                 error -> Toast.makeText(this, "Error loading limits: " + error, Toast.LENGTH_SHORT).show()
         );
     }
 
+    private void startPeriodicBackgroundUpdate() {
+        PeriodicWorkRequest updateRequest =
+                new PeriodicWorkRequest.Builder(UsageUpdateWorker.class, 15, TimeUnit.MINUTES)
+                        .build();
 
-
-
-
-
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+                "UpdateUsageStatsWork",
+                ExistingPeriodicWorkPolicy.KEEP,
+                updateRequest
+        );
+    }
 }

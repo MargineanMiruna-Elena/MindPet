@@ -76,10 +76,8 @@ public class ScreentimeRepository {
         map.put("screentimeId", screentime.getScreentimeId());
         map.put("userId", screentime.getUserId());
         map.put("appName", screentime.getAppName());
-        map.put("date", screentime.getDate().toString());
         map.put("minutesUsed", screentime.getMinutesUsed());
         map.put("goalMinutes", screentime.getGoalMinutes());
-        map.put("exceededGoalBy", screentime.getExceededGoalBy());
 
         screentimeRef.child(key).setValue(map);
     }
@@ -134,12 +132,10 @@ public class ScreentimeRepository {
         String userId = (String) map.get("userId");
         String appName = (String) map.get("appName");
         String dateStr = (String) map.get("date");
-        LocalDate date = dateStr != null ? LocalDate.parse(dateStr) : LocalDate.now();
         int minutesUsed = map.get("minutesUsed") != null ? ((Long) map.get("minutesUsed")).intValue() : 0;
         int goalMinutes = map.get("goalMinutes") != null ? ((Long) map.get("goalMinutes")).intValue() : 0;
-        int exceededGoalBy = map.get("exceededGoalBy") != null ? ((Long) map.get("exceededGoalBy")).intValue() : 0;
 
-        return new Screentime(id, userId, appName, date, minutesUsed, goalMinutes, exceededGoalBy);
+        return new Screentime(id, userId, appName, minutesUsed, goalMinutes);
     }
     public void updateMinutesUsed(String id, int minutes) {
         screentimeRef.child(id).child("minutesUsed").setValue(minutes);
