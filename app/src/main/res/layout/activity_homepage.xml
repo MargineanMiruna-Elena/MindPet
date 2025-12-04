@@ -145,10 +145,10 @@
                             android:textStyle="bold" />
 
                         <TextView
+                            android:id="@+id/textProgress"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="end"
-                            android:text="40%"
                             android:textColor="@color/french_lilac"
                             android:textSize="16sp"
                             android:textStyle="bold" />

@@ -76,11 +76,11 @@ public class AppUsageAdapter extends RecyclerView.Adapter<AppUsageAdapter.ViewHo
             holder.ivAppIcon.setImageResource(R.drawable.default_app_icon);
         }
 
-        int usedH = app.getMinutesUsed() / 60;
-        int usedM = app.getMinutesUsed() % 60;
+        long usedH = app.getMinutesUsed() / 60;
+        long usedM = app.getMinutesUsed() % 60;
 
-        int limitH = app.getGoalMinutes() / 60;
-        int limitM = app.getGoalMinutes() % 60;
+        long limitH = app.getGoalMinutes() / 60;
+        long limitM = app.getGoalMinutes() % 60;
 
         holder.tvAppDetails.setText(
                 "Used " + usedH + "h " + usedM + "min • Limit: " + limitH + "h " + limitM + "min"

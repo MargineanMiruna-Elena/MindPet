@@ -9,16 +9,17 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseError;
-import com.mat.mindpet.domain.AppUsage;
 import com.mat.mindpet.domain.StatsSummary;
+import com.mat.mindpet.model.Progress;
 import com.mat.mindpet.model.Screentime;
+import com.mat.mindpet.repository.ProgressRepository;
 import com.mat.mindpet.repository.ScreentimeRepository;
-import com.mat.mindpet.utils.DateHelper;
-import com.mat.mindpet.utils.UnlockStore;
+import com.mat.mindpet.utils.UnlocksStore;
 import com.mat.mindpet.utils.UsageStatsHelper;
 
-import java.time.LocalDate;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import javax.inject.Inject;
@@ -27,20 +28,24 @@ public class ScreentimeService {
 
     private final AuthService authService;
     private final ScreentimeRepository repository;
+    private final ProgressRepository progressRepository;
+
 
     public interface StatsCallback {
         void onSuccess(StatsSummary summary);
+
         void onFailure(String error);
     }
 
     @Inject
-    public ScreentimeService(AuthService authService, ScreentimeRepository repository) {
+    public ScreentimeService(AuthService authService, ScreentimeRepository repository, ProgressRepository progressRepository) {
         this.authService = authService;
         this.repository = repository;
+        this.progressRepository = progressRepository;
     }
 
-    public void addLimit(AppCompatActivity activity, List<AppUsage> appUsageList, String selectedApp,
-                         int totalMinutes, Runnable onSuccess, Runnable onDuplicate,
+    public void addLimit(AppCompatActivity activity, String selectedApp, long usedToday,
+                         long totalMinutes, Runnable onSuccess, Runnable onDuplicate,
                          Consumer<String> onError) {
 
         FirebaseUser currentUser = authService.getCurrentUser();
@@ -64,12 +69,13 @@ public class ScreentimeService {
                         null,
                         userId,
                         selectedApp,
-                        LocalDate.now(),
-                        0,
-                        totalMinutes,
-                        0
+                        usedToday,
+                        totalMinutes
                 );
                 repository.saveScreentime(screentime);
+
+                updateScreenGoalsMet(activity);
+
                 onSuccess.run();
             }
 
@@ -106,7 +112,7 @@ public class ScreentimeService {
         });
     }
 
-    public void updateLimit(String appName, int newGoal, Runnable onSuccess, Consumer<String> onError) {
+    public void updateLimit(String appName, int newGoal, Runnable onSuccess, Consumer<String> onError, Context activity) {
 
         FirebaseUser user = authService.getCurrentUser();
         if (user == null) {
@@ -121,6 +127,7 @@ public class ScreentimeService {
                 new ScreentimeRepository.ScreentimeCallback() {
                     @Override
                     public void onSuccess(Screentime s) {
+                        updateScreenGoalsMet(activity);
                         onSuccess.run();
                     }
 
@@ -136,60 +143,144 @@ public class ScreentimeService {
         repository.updateMinutesUsed(screentimeId, usedMinutes);
     }
 
-    public void deleteLimit(String screentimeId, Runnable onSuccess, Consumer<String> onError) {
+    public void deleteLimit(String screentimeId, Runnable onSuccess, Consumer<String> onError, Context context) {
         repository.deleteLimit(
                 screentimeId,
                 onSuccess,
                 error -> onError.accept(error)
         );
+        updateScreenGoalsMet(context);
     }
 
     public void getStatsSummary(Context ctx, StatsCallback callback) {
         try {
-            long now = System.currentTimeMillis();
+            long startOfToday = UsageStatsHelper.getStartOfDay(0);
+            long endOfToday = UsageStatsHelper.getEndOfDay(0);
 
-            long startToday = DateHelper.getStartOfDayMillis();
-            long startYesterday = DateHelper.getStartOfYesterday();
-            long startWeek = DateHelper.getStartOfLast7Days();
+            long startYesterday = UsageStatsHelper.getStartOfDay(-1);
+            long endYesterday = UsageStatsHelper.getEndOfDay(-1);
+
+            long startWeek = UsageStatsHelper.getStartOfWeek();
+            long endWeek = UsageStatsHelper.getEndOfWeek();
 
             StatsSummary summary = new StatsSummary();
 
-            summary.setTodayScreenTime(
-                    UsageStatsHelper.getTotalScreenTime(ctx, startToday, now)
-            );
+            summary.setTodayScreenTime(UsageStatsHelper.getTotalScreenTime(ctx, startOfToday, endOfToday));
+            summary.setYesterdayScreenTime(UsageStatsHelper.getTotalScreenTime(ctx, startYesterday, endYesterday));
+            summary.setWeeklyScreenTime(UsageStatsHelper.getTotalScreenTime(ctx, startWeek, endWeek));
 
-            summary.setYesterdayScreenTime(
-                    UsageStatsHelper.getTotalScreenTime(ctx, startYesterday, startToday)
-            );
+            summary.setTodayUnlocks(UnlocksStore.getUnlocks(ctx, startOfToday, endOfToday));
+            summary.setYesterdayUnlocks(UnlocksStore.getUnlocks(ctx, startYesterday, endYesterday));
+            summary.setWeeklyUnlocks(UnlocksStore.getUnlocks(ctx, startWeek, endWeek));
 
-            summary.setWeeklyScreenTime(
-                    UsageStatsHelper.getTotalScreenTime(ctx, startWeek, now)
-            );
-
-            summary.setTodayUnlocks(
-                    UnlockStore.getToday(ctx)
-            );
-
-            summary.setYesterdayUnlocks(0);
-
-            summary.setWeeklyUnlocks(summary.getTodayUnlocks());
-
-            summary.setTodayNotifications(
-                    UsageStatsHelper.getNotificationCount(ctx, startToday, now)
-            );
-
-            summary.setYesterdayNotifications(
-                    UsageStatsHelper.getNotificationCount(ctx, startYesterday, startToday)
-            );
-
-            summary.setWeeklyNotifications(
-                    UsageStatsHelper.getNotificationCount(ctx, startWeek, now)
-            );
+            summary.setTodayNotifications(UsageStatsHelper.getNotificationCount(ctx, startOfToday, endOfToday));
+            summary.setYesterdayNotifications(UsageStatsHelper.getNotificationCount(ctx, startYesterday, endOfToday));
+            summary.setWeeklyNotifications(UsageStatsHelper.getNotificationCount(ctx, startWeek, endWeek));
 
             callback.onSuccess(summary);
 
         } catch (Exception e) {
             callback.onFailure(e.getMessage());
         }
+    }
+
+    public void updateAllLimitsInBackground(Context context) {
+        FirebaseUser currentUser = authService.getCurrentUser();
+        if (currentUser == null) return;
+
+        String userId = currentUser.getUid();
+
+        repository.getScreentimesByUser(userId, new ScreentimeRepository.ScreentimesCallback() {
+            @Override
+            public void onSuccess(List<Screentime> screentimes) {
+                Map<String, Integer> usageNow = UsageStatsHelper.getUsage(context);
+                int totalLimits = screentimes.size();
+                int exceededLimits = 0;
+
+                for (Screentime s : screentimes) {
+                    int usedToday = usageNow.getOrDefault(s.getAppName(), 0);
+
+                    if (usedToday > s.getGoalMinutes()) {
+                        exceededLimits++;
+                    }
+
+                    updateUsedMinutes(s.getScreentimeId(), usedToday);
+                }
+
+                int percentMet = totalLimits == 0 ? 100 : ((totalLimits - exceededLimits) * 100) / totalLimits;
+
+                updateScreenGoalsMetToday(userId, percentMet);
+            }
+
+            @Override
+            public void onFailure(DatabaseError error) {
+            }
+        });
+    }
+
+    public void updateScreenGoalsMet(Context context) {
+        repository.getScreentimesByUser(
+                authService.getCurrentUser().getUid(),
+                new ScreentimeRepository.ScreentimesCallback() {
+                    @Override
+                    public void onSuccess(List<Screentime> screentimes) {
+                        int totalLimits = screentimes.size();
+                        int exceededLimits = 0;
+                        Map<String, Integer> usageNow = UsageStatsHelper.getUsage(context);
+
+                        for (Screentime s : screentimes) {
+                            int usedToday = usageNow.getOrDefault(s.getAppName(), 0);
+
+                            if (usedToday > s.getGoalMinutes()) {
+                                exceededLimits++;
+                            }
+                        }
+
+                        int percentMet = totalLimits == 0 ? 100 : ((totalLimits - exceededLimits) * 100) / totalLimits;
+                        updateScreenGoalsMetToday(
+                                authService.getCurrentUser().getUid(),
+                                percentMet
+                        );
+                    }
+
+                    @Override
+                    public void onFailure(DatabaseError error) {
+
+                    }
+                });
+    }
+
+    public void updateScreenGoalsMetToday(String userId, int percentMet) {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        long startOfDay = cal.getTimeInMillis();
+        long endOfDay = startOfDay + 86400000 - 1;
+
+        progressRepository.getProgressInRange(userId, startOfDay, endOfDay, new ProgressRepository.ProgressCallback() {
+            @Override
+            public void onSuccess(Progress progress) {
+
+                if (progress == null) {
+                    Progress newProgress = new Progress();
+                    newProgress.setUserId(userId);
+                    newProgress.setDate(startOfDay);
+                    newProgress.setScreenGoalsMet(percentMet);
+                    newProgress.setDailyScore(0);
+                    newProgress.setTasksCompleted(0);
+                    newProgress.setStreakCount(0);
+
+                    progressRepository.saveProgress(newProgress);
+                } else {
+                    progressRepository.updateProgressField(progress.getProgressId(), progress.getUserId(), "screenGoalsMet", percentMet);
+                }
+            }
+
+            @Override
+            public void onFailure(DatabaseError error) {
+            }
+        });
     }
 }

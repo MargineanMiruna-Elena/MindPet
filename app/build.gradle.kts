@@ -57,4 +57,6 @@ dependencies {
     implementation("androidx.work:work-runtime:2.9.0")
     implementation("com.google.guava:guava:31.1-android")
     annotationProcessor("com.google.dagger:hilt-compiler:2.46.1")
+    implementation("androidx.hilt:hilt-work:1.0.0")
+    annotationProcessor("androidx.hilt:hilt-compiler:1.0.0")
 }

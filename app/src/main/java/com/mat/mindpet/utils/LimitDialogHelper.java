@@ -1,6 +1,9 @@
 package com.mat.mindpet.utils;
 
 import android.app.AlertDialog;
+import android.app.usage.UsageStats;
+import android.app.usage.UsageStatsManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -22,17 +25,24 @@ import com.mat.mindpet.service.ScreentimeService;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
+import dagger.hilt.android.qualifiers.ApplicationContext;
+
 public class LimitDialogHelper {
 
+    private Context context;
     private final ScreentimeService screentimeService;
 
     @Inject
-    public LimitDialogHelper(ScreentimeService screentimeService) {
+    public LimitDialogHelper(@ApplicationContext Context context, ScreentimeService screentimeService) {
+        this.context = context;
         this.screentimeService = screentimeService;
     }
 
@@ -63,9 +73,10 @@ public class LimitDialogHelper {
                 .create();
 
         btnAdd.setOnClickListener(v -> {
-
+            Map<String, Integer> usageNow = UsageStatsHelper.getUsage(activity);
             String selectedApp = spinnerOptions.getSelectedItem().toString();
-            int totalMinutes = hoursPicker.getValue() * 60 + minutesPicker.getValue();
+            long totalMinutes = hoursPicker.getValue() * 60 + minutesPicker.getValue();
+            long usedMinutes = usageNow.getOrDefault(selectedApp, 0);
 
             if (totalMinutes == 0) {
                 Toast.makeText(activity, "Please set a valid time limit", Toast.LENGTH_SHORT).show();
@@ -74,11 +85,11 @@ public class LimitDialogHelper {
 
             screentimeService.addLimit(
                     activity,
-                    appUsageList,
                     selectedApp,
+                    usedMinutes,
                     totalMinutes,
                     () -> {
-                        AppUsage a = new AppUsage(null, selectedApp, 0, totalMinutes);
+                        AppUsage a = new AppUsage(null, selectedApp, usedMinutes, totalMinutes);
                         appUsageList.add(a);
                         adapter.notifyItemInserted(appUsageList.size() - 1);
                         Toast.makeText(activity, "Limit added!", Toast.LENGTH_SHORT).show();
@@ -126,9 +137,9 @@ public class LimitDialogHelper {
         minutesPicker.setMinValue(0);
         minutesPicker.setMaxValue(59);
 
-        int goal = appUsage.getGoalMinutes();
-        hoursPicker.setValue(goal / 60);
-        minutesPicker.setValue(goal % 60);
+        long goal = appUsage.getGoalMinutes();
+        hoursPicker.setValue((int) (goal / 60));
+        minutesPicker.setValue((int) (goal % 60));
 
         AlertDialog dialog = new AlertDialog.Builder(activity)
                 .setView(dialogView)
@@ -142,7 +153,8 @@ public class LimitDialogHelper {
                         adapter.notifyDataSetChanged();
                         dialog.dismiss();
                     },
-                    err -> Toast.makeText(activity, err, Toast.LENGTH_SHORT).show()
+                    err -> Toast.makeText(activity, err, Toast.LENGTH_SHORT).show(),
+                    activity
             );
         });
 
@@ -157,7 +169,8 @@ public class LimitDialogHelper {
                                     adapter.removeItem(appUsage);
                                     dialog.dismiss();
                                 },
-                                err -> Toast.makeText(activity, err, Toast.LENGTH_SHORT).show()
+                                err -> Toast.makeText(activity, err, Toast.LENGTH_SHORT).show(),
+                                activity
                         );
                     })
                     .setNegativeButton("Cancel", null)

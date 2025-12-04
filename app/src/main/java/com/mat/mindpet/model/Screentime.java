@@ -1,25 +1,18 @@
 package com.mat.mindpet.model;
 
-import java.time.LocalDate;
-
 public class Screentime {
     private String screentimeId;
     private String userId;
     private String appName;
-    private LocalDate date;
-    private int minutesUsed;
-    private int goalMinutes;
-    private int exceededGoalBy;
+    private long minutesUsed;
+    private long goalMinutes;
 
-
-    public Screentime(String screentimeId, String userId, String appName, LocalDate date, int minutesUsed, int goalMinutes, int exceededGoalBy) {
+    public Screentime(String screentimeId, String userId, String appName, long minutesUsed, long goalMinutes) {
         this.screentimeId = screentimeId;
         this.userId = userId;
         this.appName = appName;
-        this.date = date;
         this.minutesUsed = minutesUsed;
         this.goalMinutes = goalMinutes;
-        this.exceededGoalBy = exceededGoalBy;
     }
 
     public String getScreentimeId() {
@@ -46,35 +39,19 @@ public class Screentime {
         this.appName = appName;
     }
 
-    public LocalDate getDate() {
-        return date;
-    }
-
-    public void setDate(LocalDate date) {
-        this.date = date;
-    }
-
-    public int getMinutesUsed() {
+    public long getMinutesUsed() {
         return minutesUsed;
     }
 
-    public void setMinutesUsed(int minutesUsed) {
+    public void setMinutesUsed(long minutesUsed) {
         this.minutesUsed = minutesUsed;
     }
 
-    public int getGoalMinutes() {
+    public long getGoalMinutes() {
         return goalMinutes;
     }
 
-    public void setGoalMinutes(int goalMinutes) {
+    public void setGoalMinutes(long goalMinutes) {
         this.goalMinutes = goalMinutes;
-    }
-
-    public int getExceededGoalBy() {
-        return exceededGoalBy;
-    }
-
-    public void setExceededGoalBy(int exceededGoalBy) {
-        this.exceededGoalBy = exceededGoalBy;
     }
 }

@@ -3,6 +3,7 @@ package com.mat.mindpet.activity;
 import android.animation.ValueAnimator;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -10,15 +11,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.database.DatabaseError;
 import com.mat.mindpet.R;
 import com.mat.mindpet.model.Pet;
+import com.mat.mindpet.model.Progress;
 import com.mat.mindpet.model.enums.Mood;
 import com.mat.mindpet.model.enums.PetType;
 import com.mat.mindpet.repository.UserRepository;
 import com.mat.mindpet.service.PetService;
+import com.mat.mindpet.service.ProgressService;
+import com.mat.mindpet.utils.MidnightFirebaseWorker;
 import com.mat.mindpet.utils.NavigationHelper;
 
 import javax.inject.Inject;
@@ -31,8 +37,11 @@ public class HomeActivity extends AppCompatActivity {
     @Inject
     PetService petService;
 
+    @Inject
+    ProgressService progressService;
+
     private ImageView imageAnimal;
-    private TextView petName, petMood, petMoodDescription;
+    private TextView petName, petMood, petMoodDescription, percentText;
     private ProgressBar progressLevel;
     private AnimationDrawable petAnim;
     private MaterialButton playButton;
@@ -43,12 +52,14 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_homepage);
 
         NavigationHelper.setupNavigationBar(this);
+        //forceRunWorkerNow();
 
         imageAnimal = findViewById(R.id.imageAnimal);
         petName = findViewById(R.id.petName);
         petMood = findViewById(R.id.petMood);
         petMoodDescription = findViewById(R.id.petMoodDescription);
         progressLevel = findViewById(R.id.progressLevel);
+        percentText = findViewById(R.id.textProgress);
         playButton = findViewById(R.id.playBtn);
 
         petService.getPetForCurrentUser(new UserRepository.PetCallback() {
@@ -67,6 +78,29 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
     }
+
+//    private void forceRunWorkerNow() {
+//        OneTimeWorkRequest manualRequest =
+//                new OneTimeWorkRequest.Builder(MidnightFirebaseWorker.class)
+//                        .build();
+//        WorkManager.getInstance(this).enqueue(manualRequest);
+//
+//        WorkManager.getInstance(this).getWorkInfoByIdLiveData(manualRequest.getId())
+//                .observe(this, workInfo -> {
+//                    if (workInfo != null) {
+//                        Log.d("WorkerStatus", "Stare actuală: " + workInfo.getState());
+//
+//                        if (workInfo.getState() == androidx.work.WorkInfo.State.FAILED) {
+//                            Log.e("WorkerStatus", "Worker-ul a eșuat înainte să pornească!");
+//                            Toast.makeText(this, "Worker Failed!", Toast.LENGTH_SHORT).show();
+//                        }
+//                        if (workInfo.getState() == androidx.work.WorkInfo.State.SUCCEEDED) {
+//                            Log.d("WorkerStatus", "Worker terminat cu succes.");
+//                        }
+//                    }
+//                });
+//        Toast.makeText(this, "Worker pornit manual...", Toast.LENGTH_SHORT).show();
+//    }
 
     private void updatePetUI(Pet pet) {
         petName.setText(pet.getPetName());
@@ -103,6 +137,25 @@ public class HomeActivity extends AppCompatActivity {
                 }
             }
         });
+
+        progressService.getTodayProgress(new ProgressService.ProgressCallback() {
+            @Override
+            public void onSuccess(Progress progress) {
+                if (progress != null) {
+                    int percent = progress.getScreenGoalsMet();
+                    progressLevel.setProgress(percent);
+                    percentText.setText(percent + "%");
+                } else {
+                    progressLevel.setProgress(0);
+                }
+            }
+
+            @Override
+            public void onFailure(DatabaseError error) {
+                Toast.makeText(HomeActivity.this, "Error loading progress: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 
 
