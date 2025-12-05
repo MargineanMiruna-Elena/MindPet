@@ -14,12 +14,12 @@ import com.mat.mindpet.model.Progress;
 import com.mat.mindpet.model.Screentime;
 import com.mat.mindpet.repository.ProgressRepository;
 import com.mat.mindpet.repository.ScreentimeRepository;
-import com.mat.mindpet.utils.UnlocksStore;
 import com.mat.mindpet.utils.UsageStatsHelper;
 
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 import javax.inject.Inject;
@@ -28,7 +28,7 @@ public class ScreentimeService {
 
     private final AuthService authService;
     private final ScreentimeRepository repository;
-    private final ProgressRepository progressRepository;
+    private final ProgressService progressService;;
 
 
     public interface StatsCallback {
@@ -38,10 +38,10 @@ public class ScreentimeService {
     }
 
     @Inject
-    public ScreentimeService(AuthService authService, ScreentimeRepository repository, ProgressRepository progressRepository) {
+    public ScreentimeService(AuthService authService, ScreentimeRepository repository, ProgressService progressService) {
         this.authService = authService;
         this.repository = repository;
-        this.progressRepository = progressRepository;
+        this.progressService = progressService;
     }
 
     public void addLimit(AppCompatActivity activity, String selectedApp, long usedToday,
@@ -169,10 +169,6 @@ public class ScreentimeService {
             summary.setYesterdayScreenTime(UsageStatsHelper.getTotalScreenTime(ctx, startYesterday, endYesterday));
             summary.setWeeklyScreenTime(UsageStatsHelper.getTotalScreenTime(ctx, startWeek, endWeek));
 
-            summary.setTodayUnlocks(UnlocksStore.getUnlocks(ctx, startOfToday, endOfToday));
-            summary.setYesterdayUnlocks(UnlocksStore.getUnlocks(ctx, startYesterday, endYesterday));
-            summary.setWeeklyUnlocks(UnlocksStore.getUnlocks(ctx, startWeek, endWeek));
-
             summary.setTodayNotifications(UsageStatsHelper.getNotificationCount(ctx, startOfToday, endOfToday));
             summary.setYesterdayNotifications(UsageStatsHelper.getNotificationCount(ctx, startYesterday, endOfToday));
             summary.setWeeklyNotifications(UsageStatsHelper.getNotificationCount(ctx, startWeek, endWeek));
@@ -259,22 +255,23 @@ public class ScreentimeService {
         long startOfDay = cal.getTimeInMillis();
         long endOfDay = startOfDay + 86400000 - 1;
 
-        progressRepository.getProgressInRange(userId, startOfDay, endOfDay, new ProgressRepository.ProgressCallback() {
+        progressService.loadProgressForRange(userId, startOfDay, endOfDay, new ProgressService.ProgressCallback() {
             @Override
             public void onSuccess(Progress progress) {
 
                 if (progress == null) {
-                    Progress newProgress = new Progress();
-                    newProgress.setUserId(userId);
-                    newProgress.setDate(startOfDay);
-                    newProgress.setScreenGoalsMet(percentMet);
-                    newProgress.setDailyScore(0);
-                    newProgress.setTasksCompleted(0);
-                    newProgress.setStreakCount(0);
+                    final AtomicBoolean isSuccess = new AtomicBoolean(false);
+                    progressService.saveProgress(
+                            () -> {
+                                isSuccess.set(true);
+                            },
+                            (errorMessage) -> {
+                                isSuccess.set(false);
+                            }
+                    );
 
-                    progressRepository.saveProgress(newProgress);
                 } else {
-                    progressRepository.updateProgressField(progress.getProgressId(), progress.getUserId(), "screenGoalsMet", percentMet);
+                    progressService.updateProgressField(progress.getProgressId(), progress.getUserId(), "screenGoalsMet", percentMet);
                 }
             }
 

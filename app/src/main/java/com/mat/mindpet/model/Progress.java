@@ -8,18 +8,18 @@ public class Progress {
     private long date; //ziua pentru care se inregistreaza progresul
     private int screenGoalsMet; //procentul limitelor nedepasite din numarul de limite setate
     private int dailyScore; //scorul zilnic calculat pe baza rewardurilor de la taskurile indeplinite
-    private int streakCount; //numarul de zile consecutive in care utilizatorul a avut screenGoalsMet 100%
+    private boolean streak; //true daca utilizatorul a avut screenGoalsMet 100%, false altfel
     private int tasksCompleted; //numarul de taskuri completate in acea zi
 
     public Progress(){}
 
-    public Progress(String progressId, String userId, long date, int screenGoalsMet, int dailyScore, int streakCount, int tasksCompleted) {
+    public Progress(String progressId, String userId, long date, int screenGoalsMet, int dailyScore, boolean streak, int tasksCompleted) {
         this.progressId = progressId;
         this.userId = userId;
         this.date = date;
         this.screenGoalsMet = screenGoalsMet;
         this.dailyScore = dailyScore;
-        this.streakCount = streakCount;
+        this.streak = streak;
         this.tasksCompleted = tasksCompleted;
     }
 
@@ -63,12 +63,12 @@ public class Progress {
         this.dailyScore = dailyScore;
     }
 
-    public int getStreakCount() {
-        return streakCount;
+    public boolean getStreak() {
+        return streak;
     }
 
-    public void setStreakCount(int streakCount) {
-        this.streakCount = streakCount;
+    public void setStreak(boolean streak) {
+        this.streak = streak;
     }
 
     public int getTasksCompleted() {

@@ -48,20 +48,17 @@ public class ProgressRepository {
         petRepository.updatePetField(progress.getUserId(), "mood", getMoodFromProgress(progress.getScreenGoalsMet()));
     }
 
-    public void updateProgress(Progress progress) {
-        progressRef.child(progress.getProgressId()).setValue(progress);
-    }
-
     public void updateProgressField(String progressId, String userId, String fieldName, Object value) {
         progressRef.child(progressId).child(fieldName).setValue(value);
 
         if (fieldName.equals("screenGoalsMet")) {
+            if (value.equals(100)) {
+                progressRef.child(progressId).child("streak").setValue(true);
+            } else {
+                progressRef.child(progressId).child("streak").setValue(false);
+            }
             petRepository.updatePetField(userId, "mood", getMoodFromProgress((int) value));
         }
-    }
-
-    public void deleteProgress(String progressId) {
-        progressRef.child(progressId).removeValue();
     }
 
     public void getProgressById(String progressId, ProgressCallback callback) {

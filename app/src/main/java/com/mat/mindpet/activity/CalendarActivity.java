@@ -15,6 +15,7 @@ import com.mat.mindpet.R;
 import com.mat.mindpet.model.Progress;
 import com.mat.mindpet.model.Task;
 import com.mat.mindpet.repository.ProgressRepository;
+import com.mat.mindpet.service.ProgressService;
 import com.mat.mindpet.utils.NavigationHelper;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
@@ -28,6 +29,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.Calendar;
 import java.util.TimeZone;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.inject.Inject;
 
@@ -46,7 +48,7 @@ public class CalendarActivity extends AppCompatActivity {
     private String currentUserId;
 
     @Inject
-    ProgressRepository progressRepository;
+    ProgressService progressService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,24 +89,36 @@ public class CalendarActivity extends AppCompatActivity {
         long startOfDay = cal.getTimeInMillis();
         long endOfDay = startOfDay + (24 * 60 * 60 * 1000) - 1;
 
-        progressRepository.getProgressInRange(currentUserId, startOfDay, endOfDay, new ProgressRepository.ProgressCallback() {
+        progressService.loadProgressForRange(currentUserId, startOfDay, endOfDay, new ProgressService.ProgressCallback() {
             @Override
             public void onSuccess(Progress progress) {
                 if (progress != null) {
-                    textTasksCount.setText(String.valueOf(progress.getTasksCompleted()));
-                    textScreenGoalsCount.setText(progress.getScreenGoalsMet() + "%");
-                    textDailyScoreCount.setText(String.valueOf(progress.getDailyScore()));
-                    textStreakCount.setText(progress.getStreakCount() + " days");
+                    AtomicInteger streakCt = new AtomicInteger();
+                    progressService.calculateStreakCount(currentUserId, progress.getDate(), new ProgressService.StreakCallback() {
+                        @Override
+                        public void onResult(int streakCount) {
+                            streakCt.set(streakCount);
+                            textTasksCount.setText(String.valueOf(progress.getTasksCompleted()));
+                            textScreenGoalsCount.setText(progress.getScreenGoalsMet() + "%");
+                            textDailyScoreCount.setText(String.valueOf(progress.getDailyScore()));
+                            textStreakCount.setText(streakCt.get() + " days");
 
-                    for (int i = 0; i < progress.getStreakCount(); i++) {
-                        Calendar calendar = Calendar.getInstance();
-                        calendar.setTimeInMillis(progress.getDate());
-                        calendar.add(Calendar.DAY_OF_MONTH, -i);
-                        CalendarDay day = CalendarDay.from(calendar);
-                        successDays.add(day);
-                    }
+                            for (int i = 0; i < streakCt.get(); i++) {
+                                Calendar calendar = Calendar.getInstance();
+                                calendar.setTimeInMillis(progress.getDate());
+                                calendar.add(Calendar.DAY_OF_MONTH, -i);
+                                CalendarDay day = CalendarDay.from(calendar);
+                                successDays.add(day);
+                            }
 
-                    calendarView.addDecorator(new StreakDecorator(CalendarActivity.this, successDays.size(), R.color.indigo));
+                            calendarView.addDecorator(new StreakDecorator(CalendarActivity.this, successDays.size(), R.color.indigo));
+
+                        }
+
+                        @Override
+                        public void onError(DatabaseError error) {
+                        }
+                    });
 
                 } else {
                     textTasksCount.setText("0");
@@ -180,5 +194,4 @@ public class CalendarActivity extends AppCompatActivity {
             view.addSpan(new DotSpan(10, color));
         }
     }
-
 }

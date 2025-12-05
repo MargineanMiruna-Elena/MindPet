@@ -15,11 +15,11 @@
         android:layout_marginEnd="8dp"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintWidth_percent="0.3"
+        app:layout_constraintWidth_percent="0.4"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/cardUnlocks">
+        app:layout_constraintEnd_toStartOf="@id/cardNotifications">
 
         <TextView
             android:id="@+id/tvOverallUsage"
@@ -46,47 +46,6 @@
             />
     </LinearLayout>
 
-    <!-- Unlocks -->
-    <LinearLayout
-        android:id="@+id/cardUnlocks"
-        android:orientation="vertical"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:background="@drawable/bg_stat_circle"
-        android:layout_marginHorizontal="8dp"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintWidth_percent="0.3"
-        app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toEndOf="@id/cardScreentime"
-        app:layout_constraintEnd_toStartOf="@id/cardNotifications">
-
-        <TextView
-            android:id="@+id/tvUnlocks"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="0"
-            android:textStyle="bold"
-            android:textColor="@color/indigo"
-            app:autoSizeTextType="uniform"
-            app:autoSizeMinTextSize="10sp"
-            app:autoSizeMaxTextSize="36sp"
-            app:autoSizeStepGranularity="1sp"
-            />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Unlocks"
-            android:textColor="@color/indigo"
-            app:autoSizeTextType="uniform"
-            app:autoSizeMinTextSize="8sp"
-            app:autoSizeMaxTextSize="20sp"
-            app:autoSizeStepGranularity="1sp"
-            />
-    </LinearLayout>
-
     <!-- Notifications -->
     <LinearLayout
         android:id="@+id/cardNotifications"
@@ -97,10 +56,10 @@
         android:layout_marginStart="8dp"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintWidth_percent="0.3"
+        app:layout_constraintWidth_percent="0.4"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toEndOf="@id/cardUnlocks"
+        app:layout_constraintStart_toEndOf="@id/cardScreentime"
         app:layout_constraintEnd_toEndOf="parent">
 
         <TextView
