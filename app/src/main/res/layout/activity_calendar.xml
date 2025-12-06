@@ -22,7 +22,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
             android:orientation="vertical"
-            android:padding="32dp">
+            android:padding="16dp">
             <!-- Calendar Container -->
 
             <TextView
@@ -33,6 +33,7 @@
                 android:textColor="@color/indigo"
                 android:textSize="26sp"
                 android:textStyle="bold"
+                android:padding="8dp"
                 android:layout_marginBottom="4dp"/>
 
             <LinearLayout
@@ -45,12 +46,14 @@
                     android:id="@+id/calendarView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:padding="8dp"
                     android:background="@drawable/bg_card"
-                    app:mcv_dateTextAppearance="@style/TextAppearance.AppCompat.Medium"
-                    app:mcv_headerTextAppearance="@style/TextAppearance.AppCompat.Title"
+                    app:mcv_dateTextAppearance="@style/CalendarDateTextAppearance"
+                    app:mcv_headerTextAppearance="@style/CalendarHeaderTextAppearance"
+                    app:mcv_arrowColor="@color/indigo"
                     app:mcv_selectionColor="@color/wisteria"
                     app:mcv_showOtherDates="all"
-                    app:mcv_weekDayTextAppearance="@style/TextAppearance.AppCompat.Medium"/>
+                    app:mcv_weekDayTextAppearance="@style/CalendarWeekDayTextAppearance"/>
             </LinearLayout>
 
             <GridLayout
@@ -66,9 +69,9 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_columnWeight="1"
-                    android:layout_margin="8dp"
                     android:background="@drawable/bg_card"
                     android:gravity="center"
+                    android:layout_marginEnd="2dp"
                     android:orientation="vertical"
                     android:padding="16dp">
 
@@ -105,8 +108,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_columnWeight="1"
-                    android:layout_margin="8dp"
                     android:background="@drawable/bg_card"
+                    android:layout_marginBottom="2dp"
                     android:gravity="center"
                     android:orientation="vertical"
                     android:padding="16dp">
@@ -144,8 +147,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_columnWeight="1"
-                    android:layout_margin="8dp"
                     android:background="@drawable/bg_card"
+                    android:layout_marginTop="2dp"
                     android:gravity="center"
                     android:orientation="vertical"
                     android:padding="16dp">
@@ -183,8 +186,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_columnWeight="1"
-                    android:layout_margin="8dp"
                     android:background="@drawable/bg_card"
+                    android:layout_marginStart="2dp"
                     android:gravity="center"
                     android:orientation="vertical"
                     android:padding="16dp">

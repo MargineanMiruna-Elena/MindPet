@@ -147,7 +147,4 @@ public class ScreentimeRepository {
                 .addOnSuccessListener(a -> onSuccess.run())
                 .addOnFailureListener(e -> onFailure.accept(e.getMessage()));
     }
-
-
-
 }

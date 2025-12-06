@@ -8,10 +8,6 @@ public class StatsSummary implements Serializable {
     private int todayScreenTime;
     private int weeklyScreenTime;
 
-    private int yesterdayUnlocks;
-    private int todayUnlocks;
-    private int weeklyUnlocks;
-
     private int yesterdayNotifications;
     private int todayNotifications;
     private int weeklyNotifications;
@@ -38,30 +34,6 @@ public class StatsSummary implements Serializable {
 
     public void setWeeklyScreenTime(int weeklyScreenTime) {
         this.weeklyScreenTime = weeklyScreenTime;
-    }
-
-    public int getYesterdayUnlocks() {
-        return yesterdayUnlocks;
-    }
-
-    public void setYesterdayUnlocks(int yesterdayUnlocks) {
-        this.yesterdayUnlocks = yesterdayUnlocks;
-    }
-
-    public int getTodayUnlocks() {
-        return todayUnlocks;
-    }
-
-    public void setTodayUnlocks(int todayUnlocks) {
-        this.todayUnlocks = todayUnlocks;
-    }
-
-    public int getWeeklyUnlocks() {
-        return weeklyUnlocks;
-    }
-
-    public void setWeeklyUnlocks(int weeklyUnlocks) {
-        this.weeklyUnlocks = weeklyUnlocks;
     }
 
     public int getYesterdayNotifications() {

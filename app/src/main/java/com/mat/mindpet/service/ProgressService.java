@@ -14,6 +14,7 @@ import com.mat.mindpet.utils.UsageStatsHelper;
 
 import java.util.Calendar;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 import javax.inject.Inject;
@@ -46,44 +47,15 @@ public class ProgressService {
         progress.setUserId(userId);
         progress.setDate(System.currentTimeMillis());
 
-        Calendar cal = Calendar.getInstance();
-
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MILLISECOND, 0);
-
-        cal.add(Calendar.DAY_OF_YEAR, -1);
-        long startOfYesterday = cal.getTimeInMillis();
-
-        long endOfYesterday = startOfYesterday + (24 * 60 * 60 * 1000) - 1;
-
-        progressRepository.getProgressInRange(userId, startOfYesterday, endOfYesterday, new ProgressRepository.ProgressCallback() {
-            @Override
-            public void onSuccess(Progress yesterdayProgress) {
-                int currentStreak = 1;
-
-                if (yesterdayProgress != null) {
-                    currentStreak = yesterdayProgress.getStreakCount() + 1;
-                }
-
-                progress.setStreakCount(currentStreak);
-
-                fetchScreentimeAndContinue(userId, progress, onSuccess, onError);
-            }
-
-            @Override
-            public void onFailure(DatabaseError error) {
-                onError.accept(error.getMessage());
-            }
-        });
-    }
-
-    private void fetchScreentimeAndContinue(String userId, Progress progress, Runnable onSuccess, Consumer<String> onError) {
         screentimeRepository.getScreentimesByUser(userId, new ScreentimeRepository.ScreentimesCallback() {
             @Override
             public void onSuccess(List<Screentime> userScreentimes) {
                 progress.setScreenGoalsMet(calculateScreenGoalsMetPercentage(userScreentimes));
+                if (progress.getScreenGoalsMet() == 100) {
+                   progress.setStreak(true);
+                } else {
+                    progress.setStreak(false);
+                }
                 fetchTasksAndSave(userId, progress, onSuccess, onError);
             }
 
@@ -98,29 +70,22 @@ public class ProgressService {
         taskRepository.getTasksByUser(userId, new TaskRepository.TasksCallback() {
             @Override
             public void onSuccess(List<Task> tasks) {
-                int dailyScore = 0;
-                int tasksCompleted = 0;
+                AtomicInteger completedCount = new AtomicInteger(0);
+                AtomicInteger dailyScore = new AtomicInteger(0);
 
-                Calendar cal = Calendar.getInstance();
-                cal.set(Calendar.HOUR_OF_DAY, 0);
-                cal.set(Calendar.MINUTE, 0);
-                cal.set(Calendar.SECOND, 0);
-                cal.set(Calendar.MILLISECOND, 0);
-
-                long startOfDay = cal.getTimeInMillis();
+                long startOfDay = startOfDay(System.currentTimeMillis());
                 long endOfDay = startOfDay + 24 * 60 * 60 * 1000 - 1;
-
 
                 for (Task task : tasks) {
                     long deadline = task.getDeadline();
                     if (task.getIsCompleted() && deadline >= startOfDay && deadline <= endOfDay) {
-                        dailyScore += getPointsForPriority(task.getPriority());
-                        tasksCompleted++;
+                        completedCount.incrementAndGet();
+                        dailyScore.addAndGet(getPointsForPriority(task.getPriority()));
                     }
                 }
 
-                progress.setDailyScore(dailyScore);
-                progress.setTasksCompleted(tasksCompleted);
+                progress.setDailyScore(dailyScore.get());
+                progress.setTasksCompleted(completedCount.get());
 
                 progressRepository.saveProgress(progress);
                 onSuccess.run();
@@ -161,7 +126,6 @@ public class ProgressService {
         progressRepository.getProgressInRange(userId, start, end, new ProgressRepository.ProgressCallback() {
             @Override
             public void onSuccess(Progress progress) {
-                Log.d("ProgressService", "Progress found: " + progress);
                 callback.onSuccess(progress);
             }
 
@@ -177,4 +141,62 @@ public class ProgressService {
         void onFailure(DatabaseError error);
     }
 
+    public void loadProgressForRange(String userId, long startMillis, long endMillis, ProgressCallback callback) {
+        progressRepository.getProgressInRange(userId, startMillis, endMillis, new ProgressRepository.ProgressCallback() {
+            @Override
+            public void onSuccess(Progress progress) {
+                callback.onSuccess(progress);
+            }
+
+            @Override
+            public void onFailure(DatabaseError error) {
+                callback.onFailure(error);
+            }
+        });
+    }
+
+    public void updateProgressField(String progressId, String userId, String fieldName, Object value) {
+        progressRepository.updateProgressField(progressId, userId, fieldName, value);
+    }
+
+    public void calculateStreakCount(String userId, long date, StreakCallback callback) {
+        progressRepository.getAllProgressByUser(userId, new ProgressRepository.ProgressListCallback() {
+            @Override
+            public void onSuccess(List<Progress> progressList) {
+                progressList.sort((a, b) -> Long.compare(b.getDate(), a.getDate()));
+
+                int streakCount = 0;
+
+                for (Progress p : progressList) {
+                    if (p.getStreak() && startOfDay(p.getDate()) <= startOfDay(date)) {
+                        streakCount++;
+                    } else if (!p.getStreak()) {
+                        break;
+                    }
+                }
+
+                callback.onResult(streakCount);
+            }
+
+            @Override
+            public void onFailure(DatabaseError error) {
+                callback.onError(error);
+            }
+        });
+    }
+
+    public interface StreakCallback {
+        void onResult(int streakCount);
+        void onError(DatabaseError error);
+    }
+
+    private long startOfDay(long dateMillis) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(dateMillis);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        return cal.getTimeInMillis();
+    }
 }

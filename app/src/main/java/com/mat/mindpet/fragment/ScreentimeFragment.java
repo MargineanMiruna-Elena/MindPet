@@ -43,7 +43,6 @@ public class ScreentimeFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_screentime, container, false);
 
         tvOverallUsage = view.findViewById(R.id.tvOverallUsage);
-        tvUnlocks = view.findViewById(R.id.tvUnlocks);
         tvNotifications = view.findViewById(R.id.tvNotifications);
 
         if (getArguments() != null) {
@@ -62,19 +61,16 @@ public class ScreentimeFragment extends Fragment {
         switch (interval) {
             case "Yesterday":
                 tvOverallUsage.setText(formatTime(stats.getYesterdayScreenTime()));
-                tvUnlocks.setText(String.valueOf(stats.getYesterdayUnlocks()));
                 tvNotifications.setText(String.valueOf(stats.getYesterdayNotifications()));
                 break;
 
             case "Today":
                 tvOverallUsage.setText(formatTime(stats.getTodayScreenTime()));
-                tvUnlocks.setText(String.valueOf(stats.getTodayUnlocks()));
                 tvNotifications.setText(String.valueOf(stats.getTodayNotifications()));
                 break;
 
             case "This Week":
                 tvOverallUsage.setText(formatTime(stats.getWeeklyScreenTime()));
-                tvUnlocks.setText(String.valueOf(stats.getWeeklyUnlocks()));
                 tvNotifications.setText(String.valueOf(stats.getWeeklyNotifications()));
                 break;
         }
