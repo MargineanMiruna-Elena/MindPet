@@ -8,6 +8,7 @@ import androidx.work.Configuration;
 import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
+import androidx.work.WorkerFactory;
 
 import com.mat.mindpet.utils.MidnightFirebaseWorker;
 
