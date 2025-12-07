@@ -110,6 +110,7 @@ public class ProgressService {
     }
 
     private int calculateScreenGoalsMetPercentage(List<Screentime> totalScreentimes) {
+        System.out.println(totalScreentimes);
         if (totalScreentimes == null || totalScreentimes.isEmpty()) return 0;
         int metCount = 0;
         for (Screentime s : totalScreentimes) {

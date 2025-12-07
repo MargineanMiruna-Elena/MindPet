@@ -6,11 +6,14 @@ import androidx.annotation.NonNull;
 import androidx.hilt.work.HiltWorkerFactory;
 import androidx.work.Configuration;
 import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.ExistingWorkPolicy;
+import androidx.work.OneTimeWorkRequest;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 import androidx.work.WorkerFactory;
 
 import com.mat.mindpet.utils.MidnightFirebaseWorker;
+import com.mat.mindpet.utils.ScreentimeSyncWorker;
 
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
@@ -38,23 +41,22 @@ public class MindPetApp extends Application implements Configuration.Provider {
         super.onCreate();
 
         scheduleMidnightWorker();
+        scheduleScreentimeSync();
     }
 
     private void scheduleMidnightWorker() {
         long delay = calculateDelayUntilMidnight();
 
-        PeriodicWorkRequest saveRequest = new PeriodicWorkRequest.Builder(
-                MidnightFirebaseWorker.class,
-                24,
-                TimeUnit.HOURS)
-                .setInitialDelay(delay, TimeUnit.MILLISECONDS)
-                .addTag("midnight_save")
-                .build();
+        OneTimeWorkRequest request =
+                new OneTimeWorkRequest.Builder(MidnightFirebaseWorker.class)
+                        .setInitialDelay(delay, TimeUnit.MILLISECONDS)
+                        .addTag("midnight_save")
+                        .build();
 
-        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+        WorkManager.getInstance(this).enqueueUniqueWork(
                 "MidnightSaveWork",
-                ExistingPeriodicWorkPolicy.KEEP,
-                saveRequest
+                ExistingWorkPolicy.REPLACE,
+                request
         );
     }
 
@@ -68,9 +70,27 @@ public class MindPetApp extends Application implements Configuration.Provider {
         dueTime.set(Calendar.MILLISECOND, 0);
 
         if (dueTime.before(currentTime)) {
-            dueTime.add(Calendar.HOUR_OF_DAY, 24);
+            dueTime.add(Calendar.DAY_OF_YEAR, 1);
         }
 
         return dueTime.getTimeInMillis() - currentTime.getTimeInMillis();
+    }
+
+    private void scheduleScreentimeSync() {
+
+        PeriodicWorkRequest screentimeRequest =
+                new PeriodicWorkRequest.Builder(
+                        ScreentimeSyncWorker.class,
+                        15,
+                        TimeUnit.MINUTES
+                )
+                        .addTag("screentime_sync")
+                        .build();
+
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+                "ScreentimeSyncWork",
+                ExistingPeriodicWorkPolicy.KEEP,
+                screentimeRequest
+        );
     }
 }

@@ -60,8 +60,6 @@ public class UsageStatsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_statistics);
 
-        startPeriodicBackgroundUpdate();
-
         viewPager = findViewById(R.id.viewPager);
         tabLayout = findViewById(R.id.tabLayout);
         rvAppUsageList = findViewById(R.id.rvLimitsList);
@@ -73,6 +71,7 @@ public class UsageStatsActivity extends AppCompatActivity {
         new TabLayoutMediator(tabLayout, viewPager,
                 (tab, position) -> tab.setText(pagerUsageAdapter.getTabTitle(position))
         ).attach();
+        viewPager.setCurrentItem(1, false);
 
         screentimeService.getStatsSummary(this, new ScreentimeService.StatsCallback() {
             @Override
@@ -82,7 +81,8 @@ public class UsageStatsActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(String error) { }
+            public void onFailure(String error) {
+            }
         });
 
         appUsageList = new ArrayList<>();
@@ -105,12 +105,6 @@ public class UsageStatsActivity extends AppCompatActivity {
         NavigationHelper.setupNavigationBar(this);
     }
 
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        loadLimits();
-    }
     private void loadLimits() {
 
         screentimeService.getUserLimits(
@@ -144,7 +138,7 @@ public class UsageStatsActivity extends AppCompatActivity {
                         appUsageList.add(appUsage);
                     }
 
-                    int percentMet = total == 0 ? 100 : ((total - exceeded) * 100) / total;
+                    int percentMet = total == 0 ? 0 : ((total - exceeded) * 100) / total;
                     screentimeService.updateScreenGoalsMetToday(
                             authService.getCurrentUser().getUid(),
                             percentMet
@@ -153,18 +147,6 @@ public class UsageStatsActivity extends AppCompatActivity {
                     adapter.notifyDataSetChanged();
                 },
                 error -> Toast.makeText(this, "Error loading limits: " + error, Toast.LENGTH_SHORT).show()
-        );
-    }
-
-    private void startPeriodicBackgroundUpdate() {
-        PeriodicWorkRequest updateRequest =
-                new PeriodicWorkRequest.Builder(UsageUpdateWorker.class, 15, TimeUnit.MINUTES)
-                        .build();
-
-        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
-                "UpdateUsageStatsWork",
-                ExistingPeriodicWorkPolicy.KEEP,
-                updateRequest
         );
     }
 }
