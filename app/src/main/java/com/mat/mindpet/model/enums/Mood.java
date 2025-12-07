@@ -6,9 +6,9 @@ public enum Mood {
     public String getDescription() {
         switch (this) {
             case HAPPY:
-                return "Your pet is thriving and full of energy!.";
+                return "Your pet is thriving and full of energy!";
             case SAD:
-                return "Tour pet is feeling down and unhappy.";
+                return "Your pet is feeling down and unhappy.";
             case NEUTRAL:
                 return "Your pet is feeling okay.";
             default:

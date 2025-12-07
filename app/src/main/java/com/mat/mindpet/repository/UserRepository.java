@@ -7,6 +7,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.mat.mindpet.model.Pet;
+import com.mat.mindpet.model.Progress;
 import com.mat.mindpet.model.User;
 
 import java.util.List;

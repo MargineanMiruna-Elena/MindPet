@@ -43,9 +43,9 @@ public class ProgressRepository {
     public void saveProgress(Progress progress) {
         String key = progressRef.push().getKey();
         progress.setProgressId(key);
-        progressRef.child(key).setValue(progress);
-
-        petRepository.updatePetField(progress.getUserId(), "mood", getMoodFromProgress(progress.getScreenGoalsMet()));
+        progressRef.child(key).setValue(progress).addOnCompleteListener(e -> {
+            petRepository.updatePetField(progress.getUserId(), "mood", getMoodFromProgress(progress.getScreenGoalsMet()));
+        });
     }
 
     public void updateProgressField(String progressId, String userId, String fieldName, Object value) {
