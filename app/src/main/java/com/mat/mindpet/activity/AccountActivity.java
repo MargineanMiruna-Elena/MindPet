@@ -2,6 +2,7 @@ package com.mat.mindpet.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +25,8 @@ import com.mat.mindpet.repository.UserRepository;
 import com.mat.mindpet.service.AuthService;
 import com.mat.mindpet.service.UserService;
 import com.mat.mindpet.utils.NavigationHelper;
+import com.mat.mindpet.service.ScreenTimeMonitor;
+
 
 import javax.inject.Inject;
 
@@ -46,6 +50,7 @@ public class AccountActivity extends AppCompatActivity {
     private View logoutButton;
     private LinearLayout changePasswordSection;
     private EditText oldPasswordEditText, newPasswordEditText, confirmPasswordEditText;
+    private Switch switchPushNotifications;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +69,24 @@ public class AccountActivity extends AppCompatActivity {
         rowPet = findViewById(R.id.row_pet);
 
         loadCurrentUser();
+
+        switchPushNotifications = findViewById(R.id.switchPushNotifications);
+
+        SharedPreferences prefs = getSharedPreferences("settings", MODE_PRIVATE);
+        boolean enabled = prefs.getBoolean("push_enabled", false);
+        switchPushNotifications.setChecked(enabled);
+
+        switchPushNotifications.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            prefs.edit().putBoolean("push_enabled", isChecked).apply();
+
+            if (isChecked) {
+                Toast.makeText(this, "Push notifications enabled", Toast.LENGTH_SHORT).show();
+                ScreenTimeMonitor.schedule(this);
+            } else {
+                Toast.makeText(this, "Push notifications disabled", Toast.LENGTH_SHORT).show();
+                ScreenTimeMonitor.cancel(this);
+            }
+        });
 
         changePasswordSection = findViewById(R.id.btnChangePassword);
 
