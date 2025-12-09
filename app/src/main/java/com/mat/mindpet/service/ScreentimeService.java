@@ -280,4 +280,8 @@ public class ScreentimeService {
             }
         });
     }
+
+    public void updateNotificationSent(String screentimeId, boolean sent) {
+        repository.updateNotificationSent(screentimeId, sent);
+    }
 }

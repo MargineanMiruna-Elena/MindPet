@@ -1,8 +1,15 @@
 package com.mat.mindpet.utils;
 
+import android.Manifest;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
+import android.os.Build;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresPermission;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.hilt.work.HiltWorker;
 import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.PeriodicWorkRequest;
@@ -12,6 +19,7 @@ import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 import androidx.work.Worker;
 
+import com.mat.mindpet.R;
 import com.mat.mindpet.model.Screentime;
 import com.mat.mindpet.service.AuthService;
 import com.mat.mindpet.service.ScreentimeService;
@@ -66,6 +74,8 @@ public class ScreentimeSyncWorker extends Worker {
 
                         if (usedToday > s.getGoalMinutes()) {
                             exceeded++;
+                            if (!s.getNotificationSent())
+                                sendNotification(s);
                         }
                     }
 
@@ -115,5 +125,32 @@ public class ScreentimeSyncWorker extends Worker {
                 ExistingPeriodicWorkPolicy.KEEP,
                 screentimeRequest
         );
+    }
+
+    @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
+    private void sendNotification(Screentime s) {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(
+                    "screen_time_alerts",
+                    "Screen Time Alerts",
+                    NotificationManager.IMPORTANCE_HIGH
+            );
+            NotificationManager manager =
+                    getApplicationContext().getSystemService(NotificationManager.class);
+            if (manager != null) manager.createNotificationChannel(channel);
+        }
+
+        screentimeService.updateNotificationSent(s.getScreentimeId(), true);
+
+        NotificationCompat.Builder builder =
+                new NotificationCompat.Builder(getApplicationContext(), "screen_time_alerts")
+                        .setSmallIcon(R.drawable.ic_paw)
+                        .setContentTitle(s.getAppName() + " limit exceeded!")
+                        .setContentText("Used " + s.getMinutesUsed() + " min / Limit " + s.getGoalMinutes() + " min. Your pet is sad ")
+                        .setPriority(NotificationCompat.PRIORITY_HIGH);
+
+        NotificationManagerCompat.from(getApplicationContext())
+                .notify(s.getAppName().hashCode(), builder.build());
     }
 }

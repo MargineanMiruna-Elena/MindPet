@@ -1,6 +1,5 @@
 package com.mat.mindpet.activity;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -25,7 +24,6 @@ import com.mat.mindpet.repository.UserRepository;
 import com.mat.mindpet.service.AuthService;
 import com.mat.mindpet.service.UserService;
 import com.mat.mindpet.utils.NavigationHelper;
-import com.mat.mindpet.service.ScreenTimeMonitor;
 
 
 import javax.inject.Inject;
@@ -81,10 +79,8 @@ public class AccountActivity extends AppCompatActivity {
 
             if (isChecked) {
                 Toast.makeText(this, "Push notifications enabled", Toast.LENGTH_SHORT).show();
-                ScreenTimeMonitor.schedule(this);
             } else {
                 Toast.makeText(this, "Push notifications disabled", Toast.LENGTH_SHORT).show();
-                ScreenTimeMonitor.cancel(this);
             }
         });
 

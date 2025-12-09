@@ -73,7 +73,7 @@ public class ChoosePetActivity extends AppCompatActivity {
                     Mood.NEUTRAL
             );
             petService.adoptPet(pet);
-            Toast.makeText(this, "You adopted " + pet , Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "You adopted a new pet." , Toast.LENGTH_SHORT).show();
             startActivity(new Intent(ChoosePetActivity.this, HomeActivity.class));
             finish();
         });

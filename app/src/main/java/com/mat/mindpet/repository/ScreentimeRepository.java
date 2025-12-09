@@ -147,4 +147,8 @@ public class ScreentimeRepository {
                 .addOnSuccessListener(a -> onSuccess.run())
                 .addOnFailureListener(e -> onFailure.accept(e.getMessage()));
     }
+
+    public void updateNotificationSent(String screentimeId, boolean sent) {
+        screentimeRef.child(screentimeId).child("notificationSent").setValue(sent);
+    }
 }
