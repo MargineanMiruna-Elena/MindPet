@@ -18,32 +18,64 @@ public class UsageStatsHelper {
     private static final String PREF_NOTIFS = "pref_notifs";
 
     public static Map<String, Integer> getUsage(Context context) {
-        Map<String, Integer> usageMap = new HashMap<>();
 
-        UsageStatsManager usm =
-                (UsageStatsManager) context.getSystemService(Context.USAGE_STATS_SERVICE);
+        UsageStatsManager usm = (UsageStatsManager) context.getSystemService(Context.USAGE_STATS_SERVICE);
 
         long start = getStartOfDay(0);
         long end = System.currentTimeMillis();
 
-        List<UsageStats> stats = usm.queryUsageStats(
-                UsageStatsManager.INTERVAL_DAILY,
-                start,
-                end
-        );
+        UsageEvents events = usm.queryEvents(start, end);
 
-        if (stats == null) return usageMap;
+        Map<String, Long> totalUsage = new HashMap<>();
+        Map<String, Long> activeStarts = new HashMap<>();
 
-        for (UsageStats stat : stats) {
-            long millis = stat.getTotalTimeInForeground();
-            if (millis > 0) {
-                int minutes = (int) (millis / 1000 / 60);
-                String label = getAppLabel(context, stat.getPackageName());
-                usageMap.put(label, minutes);
+        UsageEvents.Event event = new UsageEvents.Event();
+
+        while (events.hasNextEvent()) {
+            events.getNextEvent(event);
+
+            String pkg = event.getPackageName();
+            long timestamp = event.getTimeStamp();
+            int type = event.getEventType();
+
+            boolean isResume =
+                    type == UsageEvents.Event.ACTIVITY_RESUMED ||
+                            type == UsageEvents.Event.MOVE_TO_FOREGROUND;
+
+            boolean isPause =
+                    type == UsageEvents.Event.ACTIVITY_PAUSED ||
+                            type == UsageEvents.Event.MOVE_TO_BACKGROUND ||
+                            type == UsageEvents.Event.ACTIVITY_STOPPED;
+
+            if (isResume) {
+                activeStarts.put(pkg, timestamp);
+
+            } else if (isPause) {
+                Long startTime = activeStarts.remove(pkg);
+                if (startTime != null) {
+                    long duration = timestamp - startTime;
+                    totalUsage.put(pkg,
+                            totalUsage.getOrDefault(pkg, 0L) + duration);
+                }
             }
         }
 
-        return usageMap;
+        long now = System.currentTimeMillis();
+        for (Map.Entry<String, Long> entry : activeStarts.entrySet()) {
+            long duration = now - entry.getValue();
+            totalUsage.put(entry.getKey(),
+                    totalUsage.getOrDefault(entry.getKey(), 0L) + duration);
+        }
+
+        Map<String, Integer> finalMap = new HashMap<>();
+        for (Map.Entry<String, Long> entry : totalUsage.entrySet()) {
+            int minutes = (int) (entry.getValue() / 1000 / 60);
+            if (minutes > 0) {
+                finalMap.put(getAppLabel(context, entry.getKey()), minutes);
+            }
+        }
+
+        return finalMap;
     }
 
     public static int getTotalScreenTime(Context ctx, long start, long end) {

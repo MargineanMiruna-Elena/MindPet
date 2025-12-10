@@ -271,7 +271,7 @@ public class ScreentimeService {
                     );
 
                 } else {
-                    progressService.updateProgressField(progress.getProgressId(), progress.getUserId(), "screenGoalsMet", percentMet);
+                    progressService.updateProgressField(progress.getUserId(), "screenGoalsMet", percentMet);
                 }
             }
 

@@ -1,9 +1,6 @@
 package com.mat.mindpet.model;
 
-import java.time.LocalDate;
-
 public class Progress {
-    private String progressId;
     private String userId;
     private long date; //ziua pentru care se inregistreaza progresul
     private int screenGoalsMet; //procentul limitelor nedepasite din numarul de limite setate
@@ -13,22 +10,13 @@ public class Progress {
 
     public Progress(){}
 
-    public Progress(String progressId, String userId, long date, int screenGoalsMet, int dailyScore, boolean streak, int tasksCompleted) {
-        this.progressId = progressId;
+    public Progress(String userId, long date, int screenGoalsMet, int dailyScore, boolean streak, int tasksCompleted) {
         this.userId = userId;
         this.date = date;
         this.screenGoalsMet = screenGoalsMet;
         this.dailyScore = dailyScore;
         this.streak = streak;
         this.tasksCompleted = tasksCompleted;
-    }
-
-    public String getProgressId() {
-        return progressId;
-    }
-
-    public void setProgressId(String progressId) {
-        this.progressId = progressId;
     }
 
     public String getUserId() {

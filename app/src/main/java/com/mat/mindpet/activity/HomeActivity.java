@@ -17,15 +17,22 @@ import androidx.work.WorkManager;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.database.DatabaseError;
 import com.mat.mindpet.R;
+import com.mat.mindpet.domain.AppUsage;
 import com.mat.mindpet.model.Pet;
 import com.mat.mindpet.model.Progress;
+import com.mat.mindpet.model.Screentime;
 import com.mat.mindpet.model.enums.Mood;
 import com.mat.mindpet.model.enums.PetType;
 import com.mat.mindpet.repository.UserRepository;
+import com.mat.mindpet.service.AuthService;
 import com.mat.mindpet.service.PetService;
 import com.mat.mindpet.service.ProgressService;
+import com.mat.mindpet.service.ScreentimeService;
 import com.mat.mindpet.utils.MidnightFirebaseWorker;
 import com.mat.mindpet.utils.NavigationHelper;
+import com.mat.mindpet.utils.UsageStatsHelper;
+
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -39,6 +46,10 @@ public class HomeActivity extends AppCompatActivity {
 
     @Inject
     ProgressService progressService;
+    @Inject
+    ScreentimeService screentimeService;
+    @Inject
+    AuthService authService;
 
     private ImageView imageAnimal;
     private TextView petName, petMood, petMoodDescription, percentText;
@@ -52,8 +63,52 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_homepage);
 
         NavigationHelper.setupNavigationBar(this);
-        //forceRunWorkerNow();
 
+        saveProgress();
+    }
+
+    private void saveProgress() {
+        screentimeService.getUserLimits(
+                screentimes -> {
+                    int exceeded = 0;
+                    int total = screentimes.size();
+                    Map<String, Integer> usageNow = UsageStatsHelper.getUsage(this);
+
+                    for (Screentime s : screentimes) {
+
+                        int usedToday = usageNow.getOrDefault(s.getAppName(), 0);
+
+                        screentimeService.updateUsedMinutes(
+                                s.getScreentimeId(),
+                                usedToday
+                        );
+
+                        if (usedToday > s.getGoalMinutes()) {
+                            exceeded++;
+                        }
+
+                        AppUsage appUsage = new AppUsage(
+                                s.getScreentimeId(),
+                                s.getAppName(),
+                                usedToday,
+                                s.getGoalMinutes()
+                        );
+
+                    }
+
+                    int percentMet = total == 0 ? 0 : ((total - exceeded) * 100) / total;
+                    screentimeService.updateScreenGoalsMetToday(
+                            authService.getCurrentUser().getUid(),
+                            percentMet
+                    );
+
+                    loadUI();
+                },
+                error -> Toast.makeText(this, "Error loading limits: " + error, Toast.LENGTH_SHORT).show()
+        );
+    }
+
+    private void loadUI() {
         imageAnimal = findViewById(R.id.imageAnimal);
         petName = findViewById(R.id.petName);
         petMood = findViewById(R.id.petMood);
@@ -78,29 +133,6 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
     }
-
-//    private void forceRunWorkerNow() {
-//        OneTimeWorkRequest manualRequest =
-//                new OneTimeWorkRequest.Builder(MidnightFirebaseWorker.class)
-//                        .build();
-//        WorkManager.getInstance(this).enqueue(manualRequest);
-//
-//        WorkManager.getInstance(this).getWorkInfoByIdLiveData(manualRequest.getId())
-//                .observe(this, workInfo -> {
-//                    if (workInfo != null) {
-//                        Log.d("WorkerStatus", "Stare actuală: " + workInfo.getState());
-//
-//                        if (workInfo.getState() == androidx.work.WorkInfo.State.FAILED) {
-//                            Log.e("WorkerStatus", "Worker-ul a eșuat înainte să pornească!");
-//                            Toast.makeText(this, "Worker Failed!", Toast.LENGTH_SHORT).show();
-//                        }
-//                        if (workInfo.getState() == androidx.work.WorkInfo.State.SUCCEEDED) {
-//                            Log.d("WorkerStatus", "Worker terminat cu succes.");
-//                        }
-//                    }
-//                });
-//        Toast.makeText(this, "Worker pornit manual...", Toast.LENGTH_SHORT).show();
-//    }
 
     private void updatePetUI(Pet pet) {
         petName.setText(pet.getPetName());

@@ -1,5 +1,7 @@
 package com.mat.mindpet.repository;
 
+import static com.mat.mindpet.utils.UsageStatsHelper.getStartOfDay;
+
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -11,8 +13,11 @@ import com.google.firebase.database.ValueEventListener;
 import com.mat.mindpet.model.Progress;
 import com.mat.mindpet.model.enums.Mood;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -41,82 +46,85 @@ public class ProgressRepository {
     }
 
     public void saveProgress(Progress progress) {
-        String key = progressRef.push().getKey();
-        progress.setProgressId(key);
-        progressRef.child(key).setValue(progress).addOnCompleteListener(e -> {
+        Map<String, Object> dataToSave = new HashMap<>();
+        dataToSave.put("dailyScore", progress.getDailyScore());
+        dataToSave.put("screenGoalsMet", progress.getScreenGoalsMet());
+        dataToSave.put("streak", progress.getStreak());
+        dataToSave.put("tasksCompleted", progress.getTasksCompleted());
+
+        long startOfDay = getStartOfDay(0);
+        dataToSave.put("date", startOfDay);
+
+        progressRef.child(progress.getUserId()).child(String.valueOf(startOfDay)).setValue(dataToSave).addOnCompleteListener(e -> {
             petRepository.updatePetField(progress.getUserId(), "mood", getMoodFromProgress(progress.getScreenGoalsMet()));
         });
     }
 
-    public void updateProgressField(String progressId, String userId, String fieldName, Object value) {
-        progressRef.child(progressId).child(fieldName).setValue(value);
+    public void updateProgressField(String userId, String fieldName, Object value) {
+        long startOfDay = getStartOfDay(0);
+
+        progressRef.child(userId).child(String.valueOf(startOfDay)).child(fieldName).setValue(value);
 
         if (fieldName.equals("screenGoalsMet")) {
             if (value.equals(100)) {
-                progressRef.child(progressId).child("streak").setValue(true);
+                progressRef.child(userId).child(String.valueOf(startOfDay)).child("streak").setValue(true);
             } else {
-                progressRef.child(progressId).child("streak").setValue(false);
+                progressRef.child(userId).child(String.valueOf(startOfDay)).child("streak").setValue(false);
             }
             petRepository.updatePetField(userId, "mood", getMoodFromProgress((int) value));
         }
     }
 
-    public void getProgressById(String progressId, ProgressCallback callback) {
-        progressRef.child(progressId).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Progress progress = dataSnapshot.getValue(Progress.class);
-                callback.onSuccess(progress);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                callback.onFailure(databaseError);
-            }
-        });
-    }
-
     public void getAllProgressByUser(String userId, ProgressListCallback callback) {
-        progressRef.orderByChild("userId").equalTo(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+        progressRef.child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                List<Progress> progressList = new java.util.ArrayList<>();
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                List<Progress> progressList = new ArrayList<>();
+
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Progress progress = snapshot.getValue(Progress.class);
-                    progressList.add(progress);
+
+                    if (progress != null) {
+                        progress.setUserId(userId);
+                        progressList.add(progress);
+                    }
                 }
                 callback.onSuccess(progressList);
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onCancelled(@NonNull DatabaseError databaseError) {
                 callback.onFailure(databaseError);
             }
         });
     }
 
     public void getProgressInRange(String userId, long startMillis, long endMillis, ProgressCallback callback) {
-
-        progressRef.orderByChild("userId").equalTo(userId)
+        progressRef.child(userId)
+                .orderByKey()
+                .startAt(String.valueOf(startMillis))
+                .endAt(String.valueOf(endMillis))
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-                        Progress last = null;
+                        Progress lastProgress = null;
+                        long maxDate = -1;
 
                         for (DataSnapshot child : snapshot.getChildren()) {
                             Progress p = child.getValue(Progress.class);
-                            if (p == null || p.getDate() == 0) continue;
+                            if (p != null) {
+                                long dateKey = Long.parseLong(child.getKey());
+                                p.setDate(dateKey);
+                                p.setUserId(userId);
 
-                            long date = p.getDate();
-                            if (date >= startMillis && date <= endMillis) {
-                                if (last == null || date > last.getDate()) {
-                                    last = p;
+                                if (dateKey > maxDate) {
+                                    maxDate = dateKey;
+                                    lastProgress = p;
                                 }
                             }
                         }
 
-                        callback.onSuccess(last);
+                        callback.onSuccess(lastProgress);
                     }
 
                     @Override

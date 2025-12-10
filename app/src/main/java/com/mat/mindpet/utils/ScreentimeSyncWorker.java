@@ -74,6 +74,7 @@ public class ScreentimeSyncWorker extends Worker {
 
                         if (usedToday > s.getGoalMinutes()) {
                             exceeded++;
+                            s.setMinutesUsed(usedToday);
                             if (!s.getNotificationSent())
                                 sendNotification(s);
                         }
@@ -147,7 +148,7 @@ public class ScreentimeSyncWorker extends Worker {
                 new NotificationCompat.Builder(getApplicationContext(), "screen_time_alerts")
                         .setSmallIcon(R.drawable.ic_paw)
                         .setContentTitle(s.getAppName() + " limit exceeded!")
-                        .setContentText("Used " + s.getMinutesUsed() + " min / Limit " + s.getGoalMinutes() + " min. Your pet is sad ")
+                        .setContentText("Used " + s.getMinutesUsed() + " min / Limit " + s.getGoalMinutes() + " min. This may affect your pet's mood. Think about taking a break!")
                         .setPriority(NotificationCompat.PRIORITY_HIGH);
 
         NotificationManagerCompat.from(getApplicationContext())
