@@ -25,13 +25,11 @@ import com.mat.mindpet.service.ScreentimeService;
 import com.mat.mindpet.utils.LimitDialogHelper;
 import com.mat.mindpet.utils.NavigationHelper;
 import com.mat.mindpet.utils.UsageStatsHelper;
-import com.mat.mindpet.utils.UsageUpdateWorker;
 
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
