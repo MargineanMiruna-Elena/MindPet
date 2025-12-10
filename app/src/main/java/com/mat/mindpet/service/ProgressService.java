@@ -156,8 +156,8 @@ public class ProgressService {
         });
     }
 
-    public void updateProgressField(String progressId, String userId, String fieldName, Object value) {
-        progressRepository.updateProgressField(progressId, userId, fieldName, value);
+    public void updateProgressField(String userId, String fieldName, Object value) {
+        progressRepository.updateProgressField(userId, fieldName, value);
     }
 
     public void calculateStreakCount(String userId, long date, StreakCallback callback) {

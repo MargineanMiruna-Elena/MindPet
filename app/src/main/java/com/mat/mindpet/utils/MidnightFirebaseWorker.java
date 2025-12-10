@@ -10,9 +10,12 @@ import androidx.work.WorkManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
+import com.mat.mindpet.model.Screentime;
 import com.mat.mindpet.service.ProgressService;
+import com.mat.mindpet.service.ScreentimeService;
 
 import java.util.Calendar;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -24,44 +27,61 @@ import dagger.assisted.AssistedInject;
 public class MidnightFirebaseWorker extends Worker {
 
     private final ProgressService progressService;
+    private final ScreentimeService screentimeService;
 
     @AssistedInject
     public MidnightFirebaseWorker(@Assisted @NonNull Context context,
                                   @Assisted @NonNull WorkerParameters workerParams,
-                                  ProgressService progressService) {
+                                  ProgressService progressService,
+                                  ScreentimeService screentimeService) {
         super(context, workerParams);
         this.progressService = progressService;
+        this.screentimeService = screentimeService;
     }
 
     @NonNull
     @Override
     public Result doWork() {
-        final CountDownLatch latch = new CountDownLatch(1);
+        final CountDownLatch latch = new CountDownLatch(2);
+        final AtomicBoolean isProgressSuccess = new AtomicBoolean(false);
+        final AtomicBoolean isScreentimeSuccess = new AtomicBoolean(false);
 
-        final AtomicBoolean isSuccess = new AtomicBoolean(false);
-
-        if (progressService == null) {
+        if (progressService == null || screentimeService == null) {
             return Result.failure();
         }
 
         progressService.saveProgress(
                 () -> {
-                    isSuccess.set(true);
+                    isProgressSuccess.set(true);
                     latch.countDown();
                 },
                 (errorMessage) -> {
-                    isSuccess.set(false);
+                    isProgressSuccess.set(false);
+                    latch.countDown();
+                }
+        );
+
+        screentimeService.getUserLimits(
+                screentimes -> {
+                    for (Screentime s : screentimes) {
+                        screentimeService.updateNotificationSent(s.getScreentimeId(), false);
+                    }
+                    isScreentimeSuccess.set(true);
+                    latch.countDown();
+                },
+                error -> {
+                    isScreentimeSuccess.set(false);
                     latch.countDown();
                 }
         );
 
         try {
-            latch.await();
+            latch.await(30, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             return Result.retry();
         }
 
-        if (isSuccess.get()) {
+        if (isProgressSuccess.get() && isScreentimeSuccess.get()) {
             scheduleNextMidnight();
             return Result.success();
         } else {

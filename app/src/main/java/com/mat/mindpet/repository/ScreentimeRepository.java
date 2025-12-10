@@ -41,6 +41,7 @@ public class ScreentimeRepository {
                             if (s != null && s.getAppName().equals(appName)) {
 
                                 child.getRef().child("goalMinutes").setValue(newGoal);
+                                child.getRef().child("notificationSent").setValue(false);
 
                                 callback.onSuccess(s);
                                 return;
@@ -78,6 +79,7 @@ public class ScreentimeRepository {
         map.put("appName", screentime.getAppName());
         map.put("minutesUsed", screentime.getMinutesUsed());
         map.put("goalMinutes", screentime.getGoalMinutes());
+        map.put("notificationSent", false);
 
         screentimeRef.child(key).setValue(map);
     }
