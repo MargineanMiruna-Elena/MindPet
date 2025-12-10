@@ -5,6 +5,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Build;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresPermission;
@@ -75,8 +76,9 @@ public class ScreentimeSyncWorker extends Worker {
                         if (usedToday > s.getGoalMinutes()) {
                             exceeded++;
                             s.setMinutesUsed(usedToday);
-                            if (!s.getNotificationSent())
+                            if (!s.isNotificationSent()) {
                                 sendNotification(s);
+                            }
                         }
                     }
 

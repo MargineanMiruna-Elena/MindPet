@@ -70,7 +70,8 @@ public class ScreentimeService {
                         userId,
                         selectedApp,
                         usedToday,
-                        totalMinutes
+                        totalMinutes,
+                        false
                 );
                 repository.saveScreentime(screentime);
 

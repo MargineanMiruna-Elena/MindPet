@@ -133,12 +133,13 @@ public class ScreentimeRepository {
         String id = (String) map.get("screentimeId");
         String userId = (String) map.get("userId");
         String appName = (String) map.get("appName");
-        String dateStr = (String) map.get("date");
         int minutesUsed = map.get("minutesUsed") != null ? ((Long) map.get("minutesUsed")).intValue() : 0;
         int goalMinutes = map.get("goalMinutes") != null ? ((Long) map.get("goalMinutes")).intValue() : 0;
+        Boolean notificationSent = (Boolean) map.get("notificationSent");
 
-        return new Screentime(id, userId, appName, minutesUsed, goalMinutes);
+        return new Screentime(id, userId, appName, minutesUsed, goalMinutes, notificationSent);
     }
+
     public void updateMinutesUsed(String id, int minutes) {
         screentimeRef.child(id).child("minutesUsed").setValue(minutes);
     }

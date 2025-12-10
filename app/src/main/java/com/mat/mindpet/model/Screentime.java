@@ -7,14 +7,15 @@ public class Screentime {
     private long minutesUsed;
     private long goalMinutes;
 
-    private boolean notificationSent;
+    private Boolean notificationSent;
 
-    public Screentime(String screentimeId, String userId, String appName, long minutesUsed, long goalMinutes) {
+    public Screentime(String screentimeId, String userId, String appName, long minutesUsed, long goalMinutes, Boolean notificationSent) {
         this.screentimeId = screentimeId;
         this.userId = userId;
         this.appName = appName;
         this.minutesUsed = minutesUsed;
         this.goalMinutes = goalMinutes;
+        this.notificationSent = notificationSent;
     }
 
     public String getScreentimeId() {
@@ -57,11 +58,11 @@ public class Screentime {
         this.goalMinutes = goalMinutes;
     }
 
-    public boolean getNotificationSent() {
+    public Boolean isNotificationSent() {
         return notificationSent;
     }
 
-    public void setNotificationSent(boolean notificationSent) {
+    public void setNotificationSent(Boolean notificationSent) {
         this.notificationSent = notificationSent;
     }
 }
