@@ -50,26 +50,26 @@ public class SignupActivity extends AppCompatActivity {
                 Toast.makeText(SignupActivity.this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
             } else if (!password.equals(confirm)) {
                 Toast.makeText(SignupActivity.this, "Passwords do not match", Toast.LENGTH_SHORT).show();
+            } else {
+                User user = new User();
+                user.setFirstName(firstName);
+                user.setLastName(lastName);
+                user.setEmail(email);
+
+                authService.signUp(email, password, user, new AuthService.AuthCallback() {
+                    @Override
+                    public void onSuccess(com.google.firebase.auth.FirebaseUser firebaseUser) {
+                        Toast.makeText(SignupActivity.this, "Signup successful", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(SignupActivity.this, ChoosePetActivity.class));
+                        finish();
+                    }
+
+                    @Override
+                    public void onFailure(String errorMessage) {
+                        Toast.makeText(SignupActivity.this, "Signup failed: " + errorMessage, Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
-
-            User user = new User();
-            user.setFirstName(firstName);
-            user.setLastName(lastName);
-            user.setEmail(email);
-
-            authService.signUp(email, password, user, new AuthService.AuthCallback() {
-                @Override
-                public void onSuccess(com.google.firebase.auth.FirebaseUser firebaseUser) {
-                    Toast.makeText(SignupActivity.this, "Signup successful", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(SignupActivity.this, ChoosePetActivity.class));
-                    finish();
-                }
-
-                @Override
-                public void onFailure(String errorMessage) {
-                    Toast.makeText(SignupActivity.this, "Signup failed: " + errorMessage, Toast.LENGTH_SHORT).show();
-                }
-            });
         });
 
         loginTextView.setOnClickListener(v -> {

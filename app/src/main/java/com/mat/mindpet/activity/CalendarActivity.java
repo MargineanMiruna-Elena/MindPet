@@ -10,12 +10,12 @@ import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.mat.mindpet.R;
 import com.mat.mindpet.model.Progress;
 import com.mat.mindpet.model.Task;
-import com.mat.mindpet.repository.ProgressRepository;
+import com.mat.mindpet.repository.TaskRepository;
 import com.mat.mindpet.service.ProgressService;
+import com.mat.mindpet.service.TaskService;
 import com.mat.mindpet.utils.NavigationHelper;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
@@ -23,12 +23,11 @@ import com.prolificinteractive.materialcalendarview.DayViewDecorator;
 import com.prolificinteractive.materialcalendarview.DayViewFacade;
 import com.prolificinteractive.materialcalendarview.spans.DotSpan;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.Calendar;
-import java.util.TimeZone;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.inject.Inject;
@@ -50,6 +49,9 @@ public class CalendarActivity extends AppCompatActivity {
     @Inject
     ProgressService progressService;
 
+    @Inject
+    TaskService taskService;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +59,7 @@ public class CalendarActivity extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
         currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        getCompletedTasksForDate(CalendarDay.today());
 
         calendarView = findViewById(R.id.calendarView);
         textTasksCount = findViewById(R.id.textTasksCount);
@@ -64,13 +67,7 @@ public class CalendarActivity extends AppCompatActivity {
         textDailyScoreCount = findViewById(R.id.textDailyScoreCount);
         textStreakCount = findViewById(R.id.textStreakCount);
 
-        CalendarDay today = CalendarDay.today();
-        calendarView.setDateSelected(today, true);
-        updateLowerSection(today);
 
-        calendarView.setOnDateChangedListener((widget, date, selected) -> {
-            updateLowerSection(date);
-        });
 
         NavigationHelper.setupNavigationBar(this);
     }
@@ -136,62 +133,123 @@ public class CalendarActivity extends AppCompatActivity {
     }
 
 
-    private void getCompletedTasksForDate(CalendarDay day, final TaskCallback callback) {
-        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-        cal.set(day.getYear(), day.getMonth() - 1, day.getDay(), 0, 0, 0);
+    private void getCompletedTasksForDate(CalendarDay day) {
+        Calendar cal = day.getCalendar();
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MILLISECOND, 0);
         long startOfDay = cal.getTimeInMillis();
+        long endOfDay = startOfDay + (24 * 60 * 60 * 1000) - 1;
 
-        cal.add(Calendar.DAY_OF_MONTH, 1);
-        long endOfDay = cal.getTimeInMillis();
+        taskService.getTasksByUser(new TaskRepository.TasksCallback() {
 
-        db.collection("tasks")
-                .whereEqualTo("userId", currentUserId)
-                .whereEqualTo("isCompleted", true)
-                .whereGreaterThanOrEqualTo("completedAt", startOfDay)
-                .whereLessThan("completedAt", endOfDay)
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        List<Task> completedTasks = new ArrayList<>();
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            completedTasks.add(document.toObject(Task.class));
+            @Override
+            public void onSuccess(List<Task> tasks) {
+                if (tasks != null) {
+                    int completedCount = 0;
+                    int calculatedScore = 0;
+
+                    for (Task task : tasks) {
+                        if (task.getIsCompleted() && task.getDeadline() >= startOfDay && task.getDeadline() < endOfDay) {
+                            completedCount++;
+                            calculatedScore += getPointsForPriority(task.getPriority());
                         }
-                        callback.onCallback(completedTasks);
-                    } else {
-                        callback.onCallback(new ArrayList<>());
                     }
-                });
-    }
 
-    interface TaskCallback {
-        void onCallback(List<Task> completedTasks);
-    }
+                    final int finalCompletedCount = completedCount;
+                    final int finalScore = calculatedScore;
 
-    private static class StreakDecorator implements DayViewDecorator {
-        private final int streak;
-        private final int color;
+                    progressService.loadProgressForRange(currentUserId, startOfDay, endOfDay, new ProgressService.ProgressCallback() {
+                        @Override
+                        public void onSuccess(Progress progress) {
 
-        StreakDecorator(AppCompatActivity activity, int streak, int colorResId) {
-            this.streak = streak;
-            this.color = ContextCompat.getColor(activity, colorResId);
-        }
+                            if (progress == null) {
+                                final AtomicBoolean isSuccess = new AtomicBoolean(false);
+                                progressService.saveProgress(
+                                        () -> {
+                                            isSuccess.set(true);
+                                        },
+                                        (errorMessage) -> {
+                                            isSuccess.set(false);
+                                        }
+                                );
 
-        @Override
-        public boolean shouldDecorate(CalendarDay day) {
-            Calendar today = Calendar.getInstance();
-            for (int i = 0; i < streak; i++) {
-                if (CalendarDay.from(today).equals(day)) {
-                    return true;
+                            } else {
+                                progressService.updateProgressField(progress.getUserId(), "tasksCompleted", finalCompletedCount);
+                                progressService.updateProgressField(progress.getUserId(), "dailyScore", finalScore);
+                            }
+
+                            CalendarDay today = CalendarDay.today();
+                            calendarView.setDateSelected(today, true);
+                            updateLowerSection(today);
+
+                            calendarView.setOnDateChangedListener((widget, date, selected) -> {
+                                updateLowerSection(date);
+                            });
+                        }
+
+                        @Override
+                        public void onFailure(DatabaseError error) {
+                            Toast.makeText(CalendarActivity.this, "Error updating progress: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
-                today.add(Calendar.DAY_OF_MONTH, -1);
             }
-            return false;
+
+            @Override
+            public void onFailure(Exception e) {
+                Toast.makeText(CalendarActivity.this, "Error fetching tasks: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+
+            }
+
+        });
+    }
+
+        private int getPointsForPriority (String priority){
+            if (priority == null) return 0;
+            switch (priority) {
+                case "Urgent":
+                    return 50;
+                case "Important":
+                    return 30;
+                case "Normal":
+                    return 20;
+                case "Nice-to-have":
+                    return 10;
+                default:
+                    return 0;
+            }
         }
 
-        @Override
-        public void decorate(DayViewFacade view) {
-            view.addSpan(new DotSpan(10, color));
+        interface TaskCallback {
+            void onCallback(List<Task> completedTasks);
+        }
+
+        private static class StreakDecorator implements DayViewDecorator {
+            private final int streak;
+            private final int color;
+
+            StreakDecorator(AppCompatActivity activity, int streak, int colorResId) {
+                this.streak = streak;
+                this.color = ContextCompat.getColor(activity, colorResId);
+            }
+
+            @Override
+            public boolean shouldDecorate(CalendarDay day) {
+                Calendar today = Calendar.getInstance();
+                for (int i = 0; i < streak; i++) {
+                    if (CalendarDay.from(today).equals(day)) {
+                        return true;
+                    }
+                    today.add(Calendar.DAY_OF_MONTH, -1);
+                }
+                return false;
+            }
+
+            @Override
+            public void decorate(DayViewFacade view) {
+                view.addSpan(new DotSpan(10, color));
+            }
         }
     }
-}
